@@ -1,0 +1,5 @@
+export { HeroSection } from './hero-section'
+export { AboutPreviewSection } from './about-preview-section'
+export { FabPreviewSection } from './fab-preview-section'
+export { LabPreviewSection } from './lab-preview-section'
+export { CtaSection } from './cta-section'
