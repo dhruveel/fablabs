@@ -1,19 +1,12 @@
 import type { Metadata } from 'next'
-import { siteConfig } from '@/config'
-import { LabHeroSection } from '@/components/sections/lab/lab-hero-section'
-import { LabGridSection } from '@/components/sections/lab/lab-grid-section'
-import { labProjects } from '@/data'
+import { LabSections } from './_lab-sections'
 
 export const metadata: Metadata = {
   title: 'Lab',
-  description: `Discover our research and experimental work at ${siteConfig.name}.`,
+  description:
+    'Step into the FabLabs Printing Lab — where innovation transforms your vision into reality.',
 }
 
 export default function LabPage() {
-  return (
-    <>
-      <LabHeroSection />
-      <LabGridSection projects={labProjects} />
-    </>
-  )
+  return <LabSections />
 }

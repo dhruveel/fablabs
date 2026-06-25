@@ -1,15 +1,27 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono, Inter } from 'next/font/google'
+import { Geist, Geist_Mono, Inter, K2D, Jersey_10 } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/lib/utils'
-import { Navbar } from '@/components/layout/navbar'
-import { Footer } from '@/components/layout/footer'
+import { DarkNav } from '@/components/layout/dark-nav'
+import { DarkFooter } from '@/components/layout/dark-footer'
 import { siteConfig } from '@/config'
-import { navItems } from '@/data'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] })
+const k2d = K2D({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  style: ['normal', 'italic'],
+  variable: '--font-k2d',
+  display: 'swap',
+})
+const jersey10 = Jersey_10({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-jersey10',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: {
@@ -42,13 +54,15 @@ export default function RootLayout({
         geistSans.variable,
         geistMono.variable,
         inter.variable,
+        k2d.variable,
+        jersey10.variable,
         'font-sans'
       )}
     >
-      <body className="min-h-full flex flex-col">
-        <Navbar items={navItems} />
+      <body className="min-h-full flex flex-col bg-black">
+        <DarkNav />
         <main className="flex-1">{children}</main>
-        <Footer />
+        <DarkFooter />
       </body>
     </html>
   )

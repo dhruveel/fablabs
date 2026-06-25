@@ -1,2 +1,6 @@
 export { Navbar } from './navbar'
 export { Footer } from './footer'
+export { Header } from './Header'
+export { Logo } from './Logo'
+export { Navigation } from './Navigation'
+export { MobileMenu } from './MobileMenu'

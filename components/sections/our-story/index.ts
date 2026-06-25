@@ -1,3 +1,5 @@
 export { StoryHeroSection } from './story-hero-section'
 export { TimelineSection } from './timeline-section'
 export { TeamSection } from './team-section'
+export { ProcessSection } from './process-section'
+export { PromiseSection } from './promise-section'
