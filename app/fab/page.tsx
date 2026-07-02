@@ -1,19 +1,12 @@
 import type { Metadata } from 'next'
-import { siteConfig } from '@/config'
-import { FabHeroSection } from '@/components/sections/fab/fab-hero-section'
-import { FabGridSection } from '@/components/sections/fab/fab-grid-section'
-import { fabProjects } from '@/data'
+import { FabSections } from './_fab-sections'
 
 export const metadata: Metadata = {
   title: 'Fab',
-  description: `Explore our fabrication projects and workshops at ${siteConfig.name}.`,
+  description:
+    'Explore our diverse range of premium fabrics — each selected for quality, durability, and design excellence.',
 }
 
 export default function FabPage() {
-  return (
-    <>
-      <FabHeroSection />
-      <FabGridSection projects={fabProjects} />
-    </>
-  )
+  return <FabSections />
 }

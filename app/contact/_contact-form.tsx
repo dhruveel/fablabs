@@ -1,0 +1,186 @@
+'use client'
+
+import Script from 'next/script'
+import { useEffect, useRef, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { cn } from '@/lib/utils'
+
+const SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? ''
+
+declare global {
+  interface Window {
+    grecaptcha?: { getResponse: () => string; reset: () => void }
+    onRecaptchaVerified?: () => void
+    onRecaptchaExpired?: () => void
+  }
+}
+
+function BlueOutlineBtn({
+  children,
+  type,
+  disabled,
+  className,
+}: {
+  children: React.ReactNode
+  type?: 'button' | 'submit' | 'reset'
+  disabled?: boolean
+  className?: string
+}) {
+  return (
+    <Button
+      type={type ?? 'button'}
+      disabled={disabled}
+      variant="outline"
+      className={cn(
+        'h-auto rounded-full border-[3px] border-[#0A64BC] bg-transparent px-7 py-2.5',
+        'text-[#0A64BC] hover:bg-[#0A64BC]/10 hover:text-[#0A64BC]',
+        'text-base sm:text-lg whitespace-nowrap',
+        'disabled:opacity-40 disabled:cursor-not-allowed',
+        className,
+      )}
+      style={{ fontFamily: 'var(--font-jersey10)' }}
+    >
+      {children}
+    </Button>
+  )
+}
+
+export function ContactForm() {
+  const formRef = useRef<HTMLFormElement>(null)
+  const [verified, setVerified] = useState(false)
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+  // Expose reCAPTCHA callbacks to the global scope so the widget can call them
+  useEffect(() => {
+    window.onRecaptchaVerified = () => setVerified(true)
+    window.onRecaptchaExpired  = () => setVerified(false)
+    return () => {
+      delete window.onRecaptchaVerified
+      delete window.onRecaptchaExpired
+    }
+  }, [])
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const token = window.grecaptcha?.getResponse()
+    if (!token) return
+
+    const form = formRef.current
+    if (!form) return
+
+    const formData = new FormData(form)
+    setStatus('submitting')
+    setErrorMessage(null)
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.get('name'),
+          phone: formData.get('phone'),
+          email: formData.get('email'),
+          subject: formData.get('subject'),
+          message: formData.get('message'),
+          recaptchaToken: token,
+        }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        setErrorMessage(data?.error ?? 'Something went wrong. Please try again.')
+        setStatus('error')
+        window.grecaptcha?.reset()
+        setVerified(false)
+        return
+      }
+
+      form.reset()
+      window.grecaptcha?.reset()
+      setVerified(false)
+      setStatus('success')
+    } catch {
+      setErrorMessage('Something went wrong. Please try again.')
+      setStatus('error')
+    }
+  }
+
+  return (
+    <>
+      {/* reCAPTCHA v2 API script — no npm package required */}
+      <Script src="https://www.google.com/recaptcha/api.js" strategy="lazyOnload" />
+
+      <form ref={formRef} className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <Input
+          type="text"
+          name="name"
+          placeholder="Your Name"
+          required
+          className="h-14 rounded-full bg-black border border-white/75 text-white placeholder:text-[#5f5e5e] px-6 text-base focus-visible:border-[#0A64BC] focus-visible:ring-[#0A64BC]/20"
+          style={{ fontFamily: 'var(--font-k2d)' }}
+        />
+        <Input
+          type="tel"
+          name="phone"
+          placeholder="Phone Number"
+          required
+          className="h-14 rounded-full bg-black border border-white/75 text-white placeholder:text-[#5f5e5e] px-6 text-base focus-visible:border-[#0A64BC] focus-visible:ring-[#0A64BC]/20"
+          style={{ fontFamily: 'var(--font-k2d)' }}
+        />
+        <Input
+          type="email"
+          name="email"
+          placeholder="Email ID"
+          required
+          className="h-14 rounded-full bg-black border border-white/75 text-white placeholder:text-[#5f5e5e] px-6 text-base focus-visible:border-[#0A64BC] focus-visible:ring-[#0A64BC]/20"
+          style={{ fontFamily: 'var(--font-k2d)' }}
+        />
+        <Input
+          type="text"
+          name="subject"
+          placeholder="Subject"
+          required
+          className="h-14 rounded-full bg-black border border-white/75 text-white placeholder:text-[#5f5e5e] px-6 text-base focus-visible:border-[#0A64BC] focus-visible:ring-[#0A64BC]/20"
+          style={{ fontFamily: 'var(--font-k2d)' }}
+        />
+        <Textarea
+          name="message"
+          placeholder="Message"
+          rows={6}
+          required
+          className="min-h-40 sm:min-h-46 rounded-[29px] bg-black border border-white/75 text-white placeholder:text-[#5f5e5e] px-6 py-4 text-base resize-none focus-visible:border-[#0A64BC] focus-visible:ring-[#0A64BC]/20"
+          style={{ fontFamily: 'var(--font-k2d)' }}
+        />
+
+        {/* reCAPTCHA v2 "I'm not a robot" checkbox */}
+        <div className="pt-1">
+          <div
+            className="g-recaptcha"
+            data-sitekey={SITE_KEY}
+            data-theme="dark"
+            data-callback="onRecaptchaVerified"
+            data-expired-callback="onRecaptchaExpired"
+          />
+        </div>
+
+        {status === 'success' && (
+          <p className="text-sm text-green-400">
+            Thanks! Your message has been sent — we&apos;ll get back to you soon.
+          </p>
+        )}
+        {status === 'error' && errorMessage && (
+          <p className="text-sm text-red-400">{errorMessage}</p>
+        )}
+
+        <div className="pt-2">
+          <BlueOutlineBtn type="submit" disabled={!verified || status === 'submitting'}>
+            {status === 'submitting' ? 'Sending…' : "Let's Talk"}
+          </BlueOutlineBtn>
+        </div>
+      </form>
+    </>
+  )
+}

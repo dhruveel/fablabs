@@ -1,9 +1,5 @@
-import type { NavItem } from '@/types'
+import { Header } from "./Header";
 
-interface NavbarProps {
-  items?: NavItem[]
-}
-
-export function Navbar({ items }: NavbarProps) {
-  return null
+export function Navbar() {
+  return <Header />;
 }

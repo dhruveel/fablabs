@@ -1,15 +1,16 @@
 import type { SiteConfig } from '@/types'
 
 export const siteConfig: SiteConfig = {
-  name: 'FabLabs',
-  tagline: 'Where Fabrication Meets Laboratory',
+  name:        'FabLabs',
+  tagline:     'Custom Merch. Real Stories.',
   description:
-    'FabLabs is a creative space at the intersection of fabrication and research — building things that matter.',
-  url: 'https://fablabs.com',
+    'FabLabs crafts premium custom merchandise — T-shirts, hoodies, and more — for college fests, startups, and brands across India.',
+  url:     'https://fablabs.in',
   ogImage: '/og.png',
   links: {
     instagram: 'https://instagram.com/fablabs',
-    linkedin: 'https://linkedin.com/company/fablabs',
-    github: 'https://github.com/fablabs',
+    linkedin:  'https://linkedin.com/company/fablabs',
+    github:    'https://github.com/fablabs',
+    whatsapp:  'https://wa.me/919489959191',
   },
 }

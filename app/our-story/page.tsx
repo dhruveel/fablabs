@@ -3,7 +3,8 @@ import { siteConfig } from '@/config'
 import { StoryHeroSection } from '@/components/sections/our-story/story-hero-section'
 import { TimelineSection } from '@/components/sections/our-story/timeline-section'
 import { TeamSection } from '@/components/sections/our-story/team-section'
-import { teamMembers, timelineEvents } from '@/data'
+import { ProcessSection } from '@/components/sections/our-story/process-section'
+import { PromiseSection } from '@/components/sections/our-story/promise-section'
 
 export const metadata: Metadata = {
   title: 'Our Story',
@@ -14,8 +15,10 @@ export default function OurStoryPage() {
   return (
     <>
       <StoryHeroSection />
-      <TimelineSection events={timelineEvents} />
-      <TeamSection members={teamMembers} />
+      <TimelineSection />
+      <TeamSection />
+      <ProcessSection />
+      <PromiseSection />
     </>
   )
 }
