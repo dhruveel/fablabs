@@ -62,7 +62,7 @@ export function TestimonialsSection() {
           Clients Testimonial
         </h2>
 
-        <div className="max-w-[1400px] mx-auto">
+        <div className="max-w-360 mx-auto">
           <Carousel opts={{ align: 'start', loop: true }} className="w-full">
             <CarouselContent className="-ml-4">
               {TESTIMONIALS.map((t) => (

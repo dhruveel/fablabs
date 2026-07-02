@@ -14,11 +14,31 @@ export function QuoteDialog() {
   const fileRef = useRef<HTMLInputElement>(null)
   const [fileName, setFileName] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
+  const [pending, setPending] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [open, setOpen] = useState(false)
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setSubmitted(true)
+    setPending(true)
+    setError(null)
+
+    try {
+      const formData = new FormData(e.currentTarget)
+      const res = await fetch('/api/quote', { method: 'POST', body: formData })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        setError(data?.error ?? 'Something went wrong. Please try again.')
+        return
+      }
+
+      setSubmitted(true)
+    } catch {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setPending(false)
+    }
   }
 
   function handleOpenChange(next: boolean) {
@@ -28,6 +48,7 @@ export function QuoteDialog() {
       setTimeout(() => {
         setSubmitted(false)
         setFileName(null)
+        setError(null)
       }, 300)
     }
   }
@@ -53,6 +74,8 @@ export function QuoteDialog() {
             onFileChange={setFileName}
             fileRef={fileRef}
             onSubmit={handleSubmit}
+            pending={pending}
+            error={error}
           />
         )}
       </DialogContent>
@@ -94,11 +117,15 @@ function QuoteForm({
   onFileChange,
   fileRef,
   onSubmit,
+  pending,
+  error,
 }: {
   fileName: string | null
   onFileChange: (name: string | null) => void
   fileRef: React.RefObject<HTMLInputElement | null>
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
+  pending: boolean
+  error: string | null
 }) {
   const inputCls =
     'h-12 rounded-full bg-black border border-white/15 text-white placeholder:text-white/30 px-5 text-sm focus-visible:border-[#0A64BC] focus-visible:ring-[#0A64BC]/20'
@@ -194,16 +221,23 @@ function QuoteForm({
           </button>
         </Field>
 
+        {error && (
+          <p className="text-sm text-red-400" style={{ fontFamily: 'var(--font-k2d)' }}>
+            {error}
+          </p>
+        )}
+
         {/* Submit */}
         <button
           type="submit"
-          className="mt-1 h-12 rounded-full font-bold text-white text-sm transition-opacity hover:opacity-90 active:scale-[0.98]"
+          disabled={pending}
+          className="mt-1 h-12 rounded-full font-bold text-white text-sm transition-opacity hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
           style={{
             fontFamily: 'var(--font-k2d)',
             background: 'linear-gradient(100deg, #0a64bc 5.67%, #4f9ce7 99.53%)',
           }}
         >
-          Send Quote Request
+          {pending ? 'Sending…' : 'Send Quote Request'}
         </button>
       </form>
     </div>

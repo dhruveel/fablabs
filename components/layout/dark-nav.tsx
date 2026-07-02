@@ -1,8 +1,9 @@
-﻿'use client'
+﻿"use client";
 
-import Link from 'next/link'
-import { MenuIcon, ShoppingBagIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import Link from "next/link";
+import Image from "next/image";
+import { MenuIcon, ShoppingBagIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetClose,
@@ -10,24 +11,32 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet'
+} from "@/components/ui/sheet";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-} from '@/components/ui/navigation-menu'
-import { navItems } from '@/data/navigation'
+} from "@/components/ui/navigation-menu";
+import { navItems } from "@/data/navigation";
 
-const LOGO = '/assets/ab5fb3b0-dd18-4678-97f9-28e9a421a72e.png'
+const LOGO = "/assets/logo.png";
 
 export function DarkNav() {
   return (
     <header className="sticky top-0 z-50 w-full bg-black/95 backdrop-blur-sm border-b border-white/10">
-      <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-4 px-4 sm:px-8 lg:px-10">
+      <div className="mx-auto flex h-16 max-w-360 items-center gap-4 px-4 sm:px-8 lg:px-10">
         {/* Logo */}
         <Link href="/" className="shrink-0">
-          <img src={LOGO} alt="FabLabs" className="h-12 w-auto object-contain" />
+          <Image
+            src={LOGO}
+            alt="FabLabs"
+            width={200}
+            height={48}
+            className="h-12 w-auto object-contain"
+            style={{ width: "auto", height: "auto" }}
+            priority
+          />
         </Link>
 
         {/* Desktop navigation */}
@@ -51,7 +60,11 @@ export function DarkNav() {
         {/* Right: cart + mobile menu */}
         <div className="ml-auto flex shrink-0 items-center gap-1">
           <Link href="/shop" aria-label="View shop">
-            <Button variant="ghost" size="icon" className="text-[#0A64BC]/70 hover:text-[#0A64BC]">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-[#0A64BC]/70 hover:text-[#0A64BC]"
+            >
               <ShoppingBagIcon className="size-5" />
             </Button>
           </Link>
@@ -76,7 +89,9 @@ export function DarkNav() {
                 className="bg-black/95 border-l border-white/10 w-72 p-0 text-white"
               >
                 <SheetHeader className="border-b border-white/10 px-6 py-5">
-                  <SheetTitle className="text-left text-[#0A64BC]">FabLabs</SheetTitle>
+                  <SheetTitle className="text-left text-[#0A64BC]">
+                    FabLabs
+                  </SheetTitle>
                 </SheetHeader>
                 <nav className="px-4 py-6" aria-label="Mobile navigation">
                   <ul className="flex flex-col gap-1" role="list">
@@ -102,5 +117,5 @@ export function DarkNav() {
         </div>
       </div>
     </header>
-  )
+  );
 }

@@ -1,6 +1,13 @@
 ﻿"use client";
 
-import { m, useScroll, useTransform, useInView, useMotionValue, animate } from "framer-motion";
+import {
+  m,
+  useScroll,
+  useTransform,
+  useInView,
+  useMotionValue,
+  animate,
+} from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -14,8 +21,8 @@ const A = {
   modelL: "/assets/ac1cd68a-a9d6-4e99-96a9-b94f3c876e97.png",
   modelC: "/assets/82d9e877-3f29-4e7b-a8a1-22cd671e989b.png",
   modelR: "/assets/c71c6d7d-fea6-4c1e-8905-495ec2543b9b.png",
-  arrowUp: "/assets/d219d5e2-e5a4-423d-85d2-623b5a03aecc.svg",
-  arrowDn: "/assets/3e65a833-c4dd-4c44-9c5b-fc6a75f985ef.svg",
+  arrowUp: "/assets/arrow-left.png",
+  arrowDn: "/assets/arrow-right.png",
   star: "/assets/4a21b2de-60a4-496d-8d33-83a8c2b14e12.svg",
   dropBg: "/assets/04414504-0ca3-4e03-89f2-7db926342531.png",
   aboutImg: "/assets/d46c4826-c621-483c-b322-454cee3ef241.jpg",
@@ -242,7 +249,7 @@ function Tagline() {
       <m.img
         src={A.star}
         alt=""
-        className="h-14 w-auto"
+        className="w-18.5 h-18.5"
         initial={{ opacity: 0, scale: 0, rotate: -90 }}
         whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
         viewport={VP}
@@ -441,7 +448,11 @@ function CraftCard({
       {/* Description — fades in on hover */}
       <m.p
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] text-white font-extrabold text-center pointer-events-none"
-        style={{ fontFamily: "var(--font-k2d)", fontSize: "16px", lineHeight: "100%" }}
+        style={{
+          fontFamily: "var(--font-k2d)",
+          fontSize: "16px",
+          lineHeight: "100%",
+        }}
         animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : 10 }}
         transition={{ duration: 0.2 }}
       >
@@ -486,17 +497,48 @@ function CraftSection() {
 
 // ── Stats Section ─────────────────────────────────────────────────────────────
 const STAT_BLUE = "linear-gradient(114.57deg, #0a64bc 49.984%, #000000 97.94%)";
-const STAT_DARK = "linear-gradient(238.65deg, #474747 72.239%, #000000 89.796%)";
+const STAT_DARK =
+  "linear-gradient(238.65deg, #474747 72.239%, #000000 89.796%)";
 
 const STATS = [
-  { steps: [1,10,20,30,40,55,65,70,80,90,99,100], suffix: "+",  label: "Corporate Partners", blue: true  },
-  { steps: [1,2,3,4,5,6,7,8,9,10],                suffix: "k+", label: "T-Shirt",            blue: false },
-  { steps: [1,5,10,15,20,25,30,35,40,45,50],      suffix: "+",  label: "College Campuses",   blue: false },
-  { steps: [1,2,3,4,5,6,7,8,9,10],                suffix: "k+", label: "Customers",          blue: true  },
+  {
+    steps: [1, 10, 20, 30, 40, 55, 65, 70, 80, 90, 99, 100],
+    suffix: "+",
+    label: "Corporate Partners",
+    blue: true,
+  },
+  {
+    steps: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    suffix: "k+",
+    label: "T-Shirt",
+    blue: false,
+  },
+  {
+    steps: [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50],
+    suffix: "+",
+    label: "College Campuses",
+    blue: false,
+  },
+  {
+    steps: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    suffix: "k+",
+    label: "Customers",
+    blue: true,
+  },
 ];
 
-function StatCard({ steps, suffix, label, blue, delay = 0 }: {
-  steps: number[]; suffix: string; label: string; blue: boolean; delay?: number;
+function StatCard({
+  steps,
+  suffix,
+  label,
+  blue,
+  delay = 0,
+}: {
+  steps: number[];
+  suffix: string;
+  label: string;
+  blue: boolean;
+  delay?: number;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const slotRef = useRef<HTMLDivElement>(null);
@@ -505,7 +547,8 @@ function StatCard({ steps, suffix, label, blue, delay = 0 }: {
 
   useEffect(() => {
     if (!inView || !slotRef.current) return;
-    const lineH = (slotRef.current.children[0] as HTMLElement)?.offsetHeight ?? 96;
+    const lineH =
+      (slotRef.current.children[0] as HTMLElement)?.offsetHeight ?? 96;
     animate(y, -(steps.length - 1) * lineH, {
       duration: 1.8,
       ease: [0.25, 0.46, 0.45, 0.94],
@@ -526,12 +569,20 @@ function StatCard({ steps, suffix, label, blue, delay = 0 }: {
       {/* Rolling slot counter */}
       <div
         className="flex items-start overflow-hidden"
-        style={{ height: "1.2em", fontSize: "clamp(28px, 4.5vw, 80px)", fontFamily: "var(--font-k2d)" }}
+        style={{
+          height: "1.2em",
+          fontSize: "clamp(28px, 4.5vw, 80px)",
+          fontFamily: "var(--font-k2d)",
+        }}
       >
         <div className="overflow-hidden h-full shrink-0">
           <m.div ref={slotRef} style={{ y }}>
             {steps.map((n, i) => (
-              <div key={i} style={{ height: "1.2em" }} className="flex items-center text-white font-normal leading-none">
+              <div
+                key={i}
+                style={{ height: "1.2em" }}
+                className="flex items-center text-white font-normal leading-none"
+              >
                 {String(n).padStart(2, "0")}
               </div>
             ))}
@@ -540,7 +591,10 @@ function StatCard({ steps, suffix, label, blue, delay = 0 }: {
         <span className="text-white font-normal leading-none">{suffix}</span>
       </div>
       {/* Label */}
-      <p className="text-white font-normal text-xs sm:text-xl lg:text-[24px]" style={{ fontFamily: "var(--font-k2d)" }}>
+      <p
+        className="text-white font-normal text-xs sm:text-xl lg:text-[24px]"
+        style={{ fontFamily: "var(--font-k2d)" }}
+      >
         {label}
       </p>
     </m.div>
@@ -563,15 +617,29 @@ function StatsSection() {
       {/* Content */}
       <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-0 max-w-360 mx-auto px-5 sm:px-21 py-16 lg:pt-77.75 lg:pb-21.5 min-h-[inherit]">
         {/* Left text */}
-        <m.div className="flex flex-col gap-5 w-full lg:max-w-99.5" {...slideFrom(-50)}>
-          <p className="text-white text-2xl sm:text-[36px] font-medium" style={{ fontFamily: "var(--font-k2d)" }}>
+        <m.div
+          className="flex flex-col gap-5 w-full lg:max-w-99.5"
+          {...slideFrom(-50)}
+        >
+          <p
+            className="text-white text-2xl sm:text-[36px] font-medium"
+            style={{ fontFamily: "var(--font-k2d)" }}
+          >
             Shop now, flex later
           </p>
-          <h2 className="text-white text-3xl sm:text-4xl lg:text-[48px] font-bold leading-[97%]" style={{ fontFamily: "var(--font-k2d)" }}>
+          <h2
+            className="text-white text-3xl sm:text-4xl lg:text-[48px] font-bold leading-[97%]"
+            style={{ fontFamily: "var(--font-k2d)" }}
+          >
             Wear your vibe. Dikha apna style.
           </h2>
-          <p className="text-white text-sm sm:text-base lg:text-[24px] leading-[97%]" style={{ fontFamily: "var(--font-k2d)" }}>
-            At Fablabs, we craft more than clothing, we craft pieces that tell your story. Har stitch, har colour, har design is all about tu kaun hai.
+          <p
+            className="text-white text-sm sm:text-base lg:text-[24px] leading-[97%]"
+            style={{ fontFamily: "var(--font-k2d)" }}
+          >
+            At Fablabs, we craft more than clothing, we craft pieces that tell
+            your story. Har stitch, har colour, har design is all about tu kaun
+            hai.
           </p>
           <BlueOutlineBtn className="self-start mt-4">Print Now</BlueOutlineBtn>
         </m.div>

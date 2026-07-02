@@ -1,6 +1,6 @@
-'use client'
+﻿'use client'
 
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 
 const imgFlow = '/assets/ce500f86-01e0-4c96-b8de-0ab9a9a7bf38.png'
 
@@ -43,10 +43,10 @@ function StepCard({ step }: { step: typeof steps[number] }) {
   )
 
   return (
-    <motion.div variants={fadeStep} className="flex flex-col items-center gap-4">
+    <m.div variants={fadeStep} className="flex flex-col items-center gap-4">
       {step.labelTop ? text : illustration}
       {step.labelTop ? illustration : text}
-    </motion.div>
+    </m.div>
   )
 }
 
@@ -54,7 +54,7 @@ export function ProcessSection() {
   return (
     <section className="bg-black w-full py-16 sm:py-20 px-4 sm:px-8 lg:px-12 relative overflow-hidden">
       {/* Central flowing illustration fades in */}
-      <motion.div
+      <m.div
         className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -62,11 +62,11 @@ export function ProcessSection() {
         transition={{ duration: 1.2, ease: 'easeOut' }}
       >
         <img src={imgFlow} alt="" className="w-[50%] sm:w-[46%] h-auto object-contain opacity-30 lg:opacity-50" />
-      </motion.div>
+      </m.div>
 
       <div className="max-w-360 mx-auto relative">
         {/* Top row: label above illustration — stagger left → right */}
-        <motion.div
+        <m.div
           className="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-4 lg:gap-2"
           variants={staggerRow}
           initial="hidden"
@@ -76,10 +76,10 @@ export function ProcessSection() {
           {steps.slice(0, 3).map((step, i) => (
             <StepCard key={i} step={step} />
           ))}
-        </motion.div>
+        </m.div>
 
         {/* Bottom row: illustration above label — stagger left → right */}
-        <motion.div
+        <m.div
           className="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-4 lg:gap-2 mt-10 sm:mt-6"
           variants={staggerRow}
           initial="hidden"
@@ -89,7 +89,7 @@ export function ProcessSection() {
           {steps.slice(3).map((step, i) => (
             <StepCard key={i} step={step} />
           ))}
-        </motion.div>
+        </m.div>
       </div>
     </section>
   )

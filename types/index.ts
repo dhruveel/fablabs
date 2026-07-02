@@ -56,5 +56,6 @@ export interface SiteConfig {
     instagram?: string
     linkedin?: string
     github?: string
+    whatsapp?: string
   }
 }

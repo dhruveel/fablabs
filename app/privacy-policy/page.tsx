@@ -116,10 +116,10 @@ function Hero() {
     <section className="relative bg-black w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 overflow-hidden">
       {/* Blue glow accent */}
       <div
-        className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full pointer-events-none"
+        className="absolute -top-40 -left-40 w-150 h-150 rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(10,100,188,0.15) 0%, transparent 70%)' }}
       />
-      <div className="relative max-w-[1200px] mx-auto">
+      <div className="relative max-w-300 mx-auto">
         <p
           className="text-[#0A64BC] font-bold text-sm sm:text-base tracking-widest uppercase mb-4"
           style={{ fontFamily: 'var(--font-k2d)' }}
@@ -147,7 +147,7 @@ function Intro() {
   return (
     <section className="bg-black w-full px-6 sm:px-12 lg:px-20 pb-4">
       <div
-        className="max-w-[1200px] mx-auto rounded-[24px] px-8 sm:px-12 py-10 sm:py-14"
+        className="max-w-300 mx-auto rounded-[24px] px-8 sm:px-12 py-10 sm:py-14"
         style={{ background: 'linear-gradient(to bottom, #201e1e, #0d0d0d)' }}
       >
         <p
@@ -168,11 +168,11 @@ function Intro() {
 function PolicyContent() {
   return (
     <section className="bg-black w-full px-6 sm:px-12 lg:px-20 py-10 sm:py-14">
-      <div className="max-w-[1200px] mx-auto flex flex-col gap-12">
+      <div className="max-w-300 mx-auto flex flex-col gap-12">
         {sections.map((s, i) => (
           <div key={i} className="flex flex-col sm:flex-row gap-6 sm:gap-12">
             {/* Section number */}
-            <div className="shrink-0 sm:w-[56px]">
+            <div className="shrink-0 sm:w-14">
               <span
                 className="text-[#0A64BC] font-bold text-xl"
                 style={{ fontFamily: 'var(--font-k2d)' }}

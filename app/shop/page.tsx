@@ -11,11 +11,11 @@ export default function ShopPage() {
     <div className="bg-black min-h-screen flex items-center justify-center px-6 relative overflow-hidden">
       {/* Background glow blobs */}
       <div
-        className="absolute top-[-200px] left-[-200px] w-[600px] h-[600px] rounded-full pointer-events-none"
+        className="absolute -top-50 -left-50 size-150 rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(10,100,188,0.12) 0%, transparent 70%)' }}
       />
       <div
-        className="absolute bottom-[-200px] right-[-200px] w-[600px] h-[600px] rounded-full pointer-events-none"
+        className="absolute -bottom-50 -right-50 size-150 rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(10,100,188,0.08) 0%, transparent 70%)' }}
       />
 
