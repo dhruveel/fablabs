@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import crypto from 'crypto'
 import { MongoClient } from 'mongodb'
 
 function loadEnvFile(filename) {
@@ -39,6 +40,16 @@ if (!uri) {
 const SAMPLE_IMAGE_BASE64 =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
 
+const uploadsDir =
+  process.env.QUOTE_UPLOADS_DIR || path.join(process.cwd(), 'uploads', 'quote-images')
+fs.mkdirSync(uploadsDir, { recursive: true })
+
+const sampleImageFilename = `${crypto.randomUUID()}.png`
+fs.writeFileSync(
+  path.join(uploadsDir, sampleImageFilename),
+  Buffer.from(SAMPLE_IMAGE_BASE64, 'base64'),
+)
+
 const now = Date.now()
 const day = 24 * 60 * 60 * 1000
 
@@ -50,9 +61,9 @@ const sampleQuotes = [
     requirements:
       'Need 40 polo T-shirts with an embroidered logo for our annual company meet. Deadline is end of next month.',
     image: {
-      data: SAMPLE_IMAGE_BASE64,
+      filename: sampleImageFilename,
+      originalName: 'logo-reference.png',
       contentType: 'image/png',
-      filename: 'logo-reference.png',
     },
     createdAt: new Date(now - 2 * day),
     ip: '203.0.113.101',

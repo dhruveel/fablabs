@@ -4,13 +4,13 @@ import { QuoteDialog } from "./quote-dialog";
 
 const A = {
   logo: "/assets/logo.png",
-  socFb: "/assets/0d9638c9-3a5a-4d92-b034-91d7ec4d7604.png",
-  socIg: "/assets/cacad907-34a9-4da8-96a7-da532840f2e9.png",
-  socTw: "/assets/5dac2d8d-3393-49d2-a377-6db21e292a0f.png",
-  socYt: "/assets/e8ef54c3-03a2-4477-a416-becbc0e5986c.png",
-  icoPhone: "/assets/50636965-30bf-40fe-9b4b-9384e4bbb5a3.png",
-  icoEmail: "/assets/3a036d4a-5868-4de0-9dbb-f9c256451473.png",
-  icoAddr: "/assets/1d529d27-fe67-4d93-8049-80bc38f85f92.png",
+  socFb: "/assets/footer-social-facebook.png",
+  socIg: "/assets/footer-social-instagram.png",
+  socTw: "/assets/footer-social-twitter.png",
+  socYt: "/assets/footer-social-youtube.png",
+  icoPhone: "/assets/footer-icon-phone.png",
+  icoEmail: "/assets/footer-icon-email.png",
+  icoAddr: "/assets/footer-icon-address.png",
 };
 
 const SOCIAL_LABELS = ["Facebook", "Instagram", "Twitter / X", "YouTube"];
@@ -28,6 +28,7 @@ export function DarkFooter() {
               width={200}
               height={96}
               className="h-24 w-auto object-contain"
+              style={{ width: "auto", height: "auto" }}
             />
             <p
               className="text-white font-bold text-sm leading-relaxed"
@@ -75,20 +76,20 @@ export function DarkFooter() {
             <p className="text-[#0A64BC] text-xl sm:text-2xl font-bold">Menu</p>
             <ul className="flex flex-col gap-1 text-white font-bold text-base sm:text-lg">
               {[
-                "Home",
-                "Our Story",
-                "Fab",
-                "Lab",
-                "Community",
-                "Shop",
-                "Contact Us",
+                { label: "Home", href: "/" },
+                { label: "Our Story", href: "/our-story" },
+                { label: "Fab", href: "/fab" },
+                { label: "Lab", href: "/lab" },
+                { label: "Community", href: "/community" },
+                { label: "Shop", href: "/shop" },
+                { label: "Contact Us", href: "/contact" },
               ].map((item) => (
-                <li key={item}>
+                <li key={item.label}>
                   <a
-                    href="#"
+                    href={item.href}
                     className="hover:text-[#0A64BC] transition-colors"
                   >
-                    {item}
+                    {item.label}
                   </a>
                 </li>
               ))}

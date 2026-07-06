@@ -13,39 +13,49 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { QuoteDialog } from "@/components/layout/quote-dialog";
 import { TestimonialsSection } from "./landing/_testimonials";
 
 // ── Assets ────────────────────────────────────────────────────────────────────
 const A = {
-  heroBg: "/assets/ed62f8a7-530d-4c1f-accd-ed9bdc5ff1e3.png",
-  modelL: "/assets/ac1cd68a-a9d6-4e99-96a9-b94f3c876e97.png",
-  modelC: "/assets/82d9e877-3f29-4e7b-a8a1-22cd671e989b.png",
-  modelR: "/assets/c71c6d7d-fea6-4c1e-8905-495ec2543b9b.png",
+  heroBg: "/assets/home-hero-bg.png",
+  modelL: "/assets/home-hero-model-left.png",
+  modelC: "/assets/home-hero-model-center.png",
+  modelR: "/assets/home-hero-model-right.png",
   arrowUp: "/assets/arrow-left.png",
   arrowDn: "/assets/arrow-right.png",
-  star: "/assets/4a21b2de-60a4-496d-8d33-83a8c2b14e12.svg",
-  dropBg: "/assets/04414504-0ca3-4e03-89f2-7db926342531.png",
-  aboutImg: "/assets/d46c4826-c621-483c-b322-454cee3ef241.jpg",
+  star: "/assets/home-tagline-star.svg",
+  dropBg: "/assets/home-drop-bg.png",
+  dropCrewCircle: "/assets/drop-crew-circle.png",
+  aboutImg: "/assets/home-about-photo.jpg",
   craft1: "/assets/craft-card1.jpg",
   craft2: "/assets/craft-card2.jpg",
   craft3: "/assets/craft-card3.jpg",
   craft4: "/assets/craft-card4.jpg",
   statsCardBg: "/assets/stats-card-bg.svg",
-  cl1: "/assets/e5d4aa11-e257-455a-bd83-0094be5a7628.png",
-  cl2: "/assets/78f2cc3f-bb47-4f53-97a1-6d9dfc4a7527.png",
-  cl3: "/assets/5df5ff08-3002-48c3-b570-dc74866e0c3d.png",
-  cl4: "/assets/ab1b9c8f-0e06-4ac3-afb0-de813ceee87f.png",
-  cl5: "/assets/4a977989-16de-485d-a12d-2f7bf31dce0a.png",
-  cl6: "/assets/35b93b4a-ad0b-4bda-8a56-abc781f28052.png",
-  cl7: "/assets/d1ba393e-13cf-4a55-8988-79031d8915bf.png",
-  cl8: "/assets/6d935726-90de-4241-9d17-38b528195248.png",
-  cl9: "/assets/ae484975-fd14-4f6a-b9bb-652678378f15.png",
-  cl10: "/assets/a35ea7df-a28d-4940-a197-2cef46e82d28.png",
-  cl11: "/assets/d9dc4d34-4309-4765-97bf-800d19c5cd6a.png",
-  qArt: "/assets/8e45fa36-3812-4020-8d08-a5587cb3e3aa.png",
-  qHand: "/assets/b5db3408-7b7a-475e-b0c1-3b10acd1f6ab.png",
-  ctaBg: "/assets/c44b006c-11eb-4c4e-be8e-dca171cfc7bf.png",
-  ctaIllus: "/assets/fa6b2f5e-691c-4559-a286-0d6b8b5f8f57.png",
+  cl1: "/assets/home-client-logo-1.png",
+  cl2: "/assets/home-client-logo-2.png",
+  cl3: "/assets/home-client-logo-3.png",
+  cl4: "/assets/home-client-logo-4.png",
+  cl5: "/assets/home-client-logo-5.png",
+  cl6: "/assets/home-client-logo-6.png",
+  cl7: "/assets/home-client-logo-7.png",
+  cl8: "/assets/home-client-logo-8.png",
+  cl9: "/assets/home-client-logo-9.png",
+  cl10: "/assets/home-client-logo-10.png",
+  cl11: "/assets/home-client-logo-11.png",
+  qArt: "/assets/home-quotes-art.png",
+  ctaBg: "/assets/home-cta-bg.png",
+  ctaIcon: "/assets/cta-contact-icon.png",
+  // Stats "counter group" (Figma node 160:263)
+  statsHandPhone: "/assets/stats-hand-phone.png",
+  statsBadgeCorporate: "/assets/stats-badge-corporate-partners.svg",
+  statsBadgeCollege: "/assets/stats-badge-college-campuses.svg",
+  statsBadgeTshirt: "/assets/stats-badge-tshirt.svg",
+  statsBadgeCustomers: "/assets/stats-badge-customers.svg",
+  // Quotes "Group 35" (Figma node 182:356)
+  quotesGlow: "/assets/quotes-glow.svg",
+  quotesHandCutout: "/assets/quotes-hand-cutout.png",
 };
 
 // ── Animation helpers ─────────────────────────────────────────────────────────
@@ -85,10 +95,15 @@ const staggerUp = {
 };
 
 // ── Shared CTA button ─────────────────────────────────────────────────────────
+// Forwards any extra props (onClick, ref, aria-*, ...) onto the actual DOM
+// node — required so this can be used as a Base UI DialogTrigger `render`
+// target; without it, the props Base UI merges in (like onClick) would be
+// silently dropped and clicking the button would do nothing.
 function BlueOutlineBtn({
   children,
   className,
-}: {
+  ...props
+}: React.ComponentProps<typeof m.span> & {
   children: React.ReactNode;
   className?: string;
 }) {
@@ -98,6 +113,7 @@ function BlueOutlineBtn({
       whileHover={{ scale: 1.07 }}
       whileTap={{ scale: 0.96 }}
       transition={{ type: "spring" as const, stiffness: 350, damping: 20 }}
+      {...props}
     >
       <Button
         variant="outline"
@@ -217,7 +233,7 @@ function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.7, ease: "easeOut" }}
         >
-          <BlueOutlineBtn>Print Now</BlueOutlineBtn>
+          <QuoteDialog trigger={<BlueOutlineBtn>Get My Quote</BlueOutlineBtn>} />
           <div className="flex gap-3">
             <button
               aria-label="Previous"
@@ -272,25 +288,37 @@ function DropSection() {
   return (
     <section className="relative w-full bg-black overflow-hidden min-h-125 lg:min-h-171.5">
       <div className="absolute inset-0">
-        <img
-          src={A.dropBg}
-          alt=""
-          className="absolute w-full h-[150%] object-cover top-[-10%]"
-        />
+        <div className="absolute inset-x-0 top-[-10%] h-[150%]">
+          <Image src={A.dropBg} alt="" fill className="object-cover" />
+        </div>
         <div className="absolute inset-0 bg-linear-to-b from-black/30 to-black/70" />
       </div>
       <div className="relative z-10 max-w-360 mx-auto w-full flex flex-col items-center justify-center gap-8 sm:gap-10 px-6 py-24 sm:py-32 min-h-[inherit]">
         <m.h2
-          className="text-white text-3xl sm:text-5xl lg:text-[64px] font-bold text-center uppercase leading-tight max-w-3xl"
-          style={{ fontFamily: "var(--font-k2d)" }}
+          className="text-white text-3xl sm:text-5xl lg:text-[64px] text-center uppercase leading-relaxed max-w-3xl"
+          style={{ fontFamily: "var(--font-higher-jump)" }}
           initial={{ opacity: 0, scale: 0.88 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={VP}
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
-          Design your drop.
+          <span style={{ fontFamily: "var(--font-rock-salt)" }}>
+            Design your drop.
+          </span>
           <br />
-          Ban apna crew.
+          Ban apna{" "}
+          <span className="relative inline-block whitespace-nowrap">
+            crew.
+            {/* Hand-drawn circle clipart (Figma node 64:77), scaled up around
+                the word rather than Figma's fixed pixel crop, so it still
+                lines up regardless of how the responsive text reflows. */}
+            <img
+              src={A.dropCrewCircle}
+              alt=""
+              aria-hidden
+              className="pointer-events-none select-none absolute left-1/2 top-1/2 w-[190%] max-w-none -translate-x-1/2 -translate-y-1/2 rotate-10"
+            />
+          </span>
         </m.h2>
         <m.div
           className="flex flex-col sm:flex-row gap-4 sm:gap-6"
@@ -318,13 +346,15 @@ function AboutSection() {
           <CardContent className="p-6 sm:p-8 lg:p-10 flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
             {/* Image */}
             <m.div
-              className="hidden lg:block w-[42%] shrink-0 rounded-[27px] overflow-hidden self-stretch"
+              className="relative hidden lg:block w-[42%] shrink-0 rounded-[27px] overflow-hidden self-stretch"
               {...slideFrom(-60, 0.15)}
             >
-              <img
+              <Image
                 src={A.aboutImg}
                 alt=""
-                className="w-full h-full object-cover min-h-100"
+                fill
+                sizes="(min-width: 1024px) 42vw, 100vw"
+                className="object-cover min-h-100"
               />
             </m.div>
             {/* Text */}
@@ -430,12 +460,8 @@ function CraftCard({
         className="object-cover"
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 320px"
       />
-      {/* Dark overlay — fades in on hover for description readability */}
-      <m.div
-        className="absolute inset-0 bg-black/60"
-        animate={{ opacity: hovered ? 1 : 0 }}
-        transition={{ duration: 0.2 }}
-      />
+      {/* Dark overlay — permanent, only the text below swaps on hover */}
+      <div className="absolute inset-0 bg-black/60" />
       {/* Label — fades out on hover */}
       <m.p
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-64.75 text-white font-bold text-3xl sm:text-4xl lg:text-[48px] text-center leading-normal pointer-events-none"
@@ -496,108 +522,299 @@ function CraftSection() {
 }
 
 // ── Stats Section ─────────────────────────────────────────────────────────────
-const STAT_BLUE = "linear-gradient(114.57deg, #0a64bc 49.984%, #000000 97.94%)";
-const STAT_DARK =
-  "linear-gradient(238.65deg, #474747 72.239%, #000000 89.796%)";
-
 const STATS = [
   {
     steps: [1, 10, 20, 30, 40, 55, 65, 70, 80, 90, 99, 100],
     suffix: "+",
     label: "Corporate Partners",
-    blue: true,
   },
   {
     steps: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     suffix: "k+",
     label: "T-Shirt",
-    blue: false,
   },
   {
     steps: [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50],
     suffix: "+",
     label: "College Campuses",
-    blue: false,
   },
   {
     steps: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     suffix: "k+",
     label: "Customers",
-    blue: true,
   },
 ];
 
-function StatCard({
+// Per-badge position/rotation/size, transcribed from Figma node 160:263
+// ("counter group", a 993.521×923 frame). Insets are % of that frame, so the
+// composition stays pixel-accurate at any scale as long as aspect is kept.
+const BADGE_LAYOUT = [
+  {
+    // Corporate Partners
+    bg: A.statsBadgeCorporate,
+    bgOuter: "0 29.94% 84.13% 56.34%",
+    bgInner: "11.88% 2.29% 4.04% 6.48%",
+    numberOuter: "5.42% 30.84% 86.68% 58.28%",
+    numberRotate: 17,
+    numberH: "hypot(-12.4387cqw,60.3142cqh)",
+    numberW: "hypot(87.5613cqw,39.6858cqh)",
+    suffixOuter: "5.46% 30.06% 87.17% 65.23%",
+    suffixRotate: 17,
+    suffixH: "hypot(-38.7196cqw,87.113cqh)",
+    suffixW: "hypot(61.2804cqw,12.887cqh)",
+    labelOuter: "9.67% 31.54% 85.31% 57.79%",
+    labelRotate: 17,
+    labelH: "hypot(-4.41123cqw,33.0528cqh)",
+    labelW: "hypot(95.5888cqw,66.9472cqh)",
+    labelSize: 12,
+  },
+  {
+    // T-Shirt
+    bg: A.statsBadgeTshirt,
+    bgOuter: "16.36% 20.66% 68.09% 67.01%",
+    bgInner: "5.49% 3.51% 6.25% 0.65%",
+    numberOuter: "21.34% 22.39% 73.42% 67.54%",
+    numberRotate: -1.33,
+    numberH: "hypot(1.06894cqw,95.2339cqh)",
+    numberW: "hypot(98.9311cqw,-4.76613cqh)",
+    suffixOuter: "18.79% 21.26% 74.21% 72.8%",
+    suffixRotate: -2.83,
+    suffixH: "hypot(5.18733cqw,95.7273cqh)",
+    suffixW: "hypot(94.8127cqw,-4.27273cqh)",
+    labelOuter: "25.56% 24.85% 72.31% 70.26%",
+    labelRotate: -2.08,
+    labelH: "hypot(1.34283cqw,91.1752cqh)",
+    labelW: "hypot(98.6572cqw,-8.82484cqh)",
+    labelSize: 14,
+  },
+  {
+    // College Campuses
+    bg: A.statsBadgeCollege,
+    bgOuter: "18.31% 40.23% 67.39% 44.17%",
+    bgInner: "8.77% 4.29% 2.44% 7.27%",
+    numberOuter: "23.07% 41.7% 69.88% 47.6%",
+    numberRotate: 11.7,
+    numberH: "hypot(-8.77774cqw,69.1709cqh)",
+    numberW: "hypot(91.2223cqw,30.8291cqh)",
+    suffixOuter: "22.39% 41.78% 70.38% 53.99%",
+    suffixRotate: 11.7,
+    suffixH: "hypot(-29.9713cqw,90.8922cqh)",
+    suffixW: "hypot(70.0287cqw,9.10784cqh)",
+    labelOuter: "27.01% 43.36% 69.07% 46.36%",
+    labelRotate: 11.7,
+    labelH: "hypot(-3.17734cqw,43.3342cqh)",
+    labelW: "hypot(96.8227cqw,56.6658cqh)",
+    labelSize: 12,
+  },
+  {
+    // Customers
+    bg: A.statsBadgeCustomers,
+    bgOuter: "37.05% 33.49% 44.96% 52.92%",
+    bgInner: "0.49% 4.91% 13.58% 2%",
+    numberOuter: "39.01% 35.61% 53.74% 53.65%",
+    numberRotate: 12.91,
+    numberH: "hypot(-9.62722cqw,66.9603cqh)",
+    numberW: "hypot(90.3728cqw,33.0397cqh)",
+    suffixOuter: "37.92% 34.31% 54.29% 58.93%",
+    suffixRotate: 11.42,
+    suffixH: "hypot(-18.2712cqw,84.575cqh)",
+    suffixW: "hypot(81.7288cqw,15.425cqh)",
+    labelOuter: "43.55% 37.67% 52.43% 55.16%",
+    labelRotate: 16.71,
+    labelH: "hypot(-7.26251cqw,46.4952cqh)",
+    labelW: "hypot(92.7375cqw,53.5048cqh)",
+    labelSize: 14,
+  },
+];
+
+// Rolling digit stack: reveals `steps` one at a time, settling on the last
+// value once its rotated bounding box scrolls into view.
+// Base sizes below are tuned for the 993.521px-wide reference frame from
+// Figma; `scale` (rendered width ÷ 993.521, measured live) keeps text
+// proportional to the badge shapes at any viewport size, mobile included.
+function RollingNumberGroup({
   steps,
-  suffix,
-  label,
-  blue,
+  inView,
   delay = 0,
+  scale,
 }: {
   steps: number[];
-  suffix: string;
-  label: string;
-  blue: boolean;
+  inView: boolean;
   delay?: number;
+  scale: number;
 }) {
-  const cardRef = useRef<HTMLDivElement>(null);
   const slotRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(cardRef, { once: true });
   const y = useMotionValue(0);
 
   useEffect(() => {
     if (!inView || !slotRef.current) return;
     const lineH =
-      (slotRef.current.children[0] as HTMLElement)?.offsetHeight ?? 96;
+      (slotRef.current.children[0] as HTMLElement)?.offsetHeight ?? 43 * scale;
     animate(y, -(steps.length - 1) * lineH, {
       duration: 1.8,
       ease: [0.25, 0.46, 0.45, 0.94],
       delay,
     });
-  }, [inView, delay, steps.length, y]);
+  }, [inView, steps.length, y, delay, scale]);
 
   return (
-    <m.div
-      ref={cardRef}
-      className="w-36 sm:w-62.25 h-36 sm:h-52 rounded-[24px] p-4 sm:p-5 flex flex-col justify-between"
-      style={{ background: blue ? STAT_BLUE : STAT_DARK }}
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, ease: "easeOut" as const, delay }}
-    >
-      {/* Rolling slot counter */}
-      <div
-        className="flex items-start overflow-hidden"
+    <div className="overflow-clip relative size-full">
+      <m.div
+        ref={slotRef}
+        className="absolute leading-[0] not-italic text-white font-bold"
         style={{
-          height: "1.2em",
-          fontSize: "clamp(28px, 4.5vw, 80px)",
           fontFamily: "var(--font-k2d)",
+          fontSize: 36 * scale,
+          left: 7 * scale,
+          top: -11 * scale,
+          width: 87 * scale,
+          y,
         }}
       >
-        <div className="overflow-hidden h-full shrink-0">
-          <m.div ref={slotRef} style={{ y }}>
-            {steps.map((n, i) => (
-              <div
-                key={i}
-                style={{ height: "1.2em" }}
-                className="flex items-center text-white font-normal leading-none"
-              >
-                {String(n).padStart(2, "0")}
-              </div>
-            ))}
-          </m.div>
+        {steps.map((n, i) => (
+          <p key={i} className="leading-[normal] mb-0">
+            {String(n).padStart(2, "0")}
+          </p>
+        ))}
+      </m.div>
+    </div>
+  );
+}
+
+function CounterBadge({
+  stat,
+  layout,
+  inView,
+  delay,
+  scale,
+}: {
+  stat: (typeof STATS)[number];
+  layout: (typeof BADGE_LAYOUT)[number];
+  inView: boolean;
+  delay: number;
+  scale: number;
+}) {
+  return (
+    <>
+      <div className="absolute" style={{ inset: layout.bgOuter }}>
+        <div className="absolute" style={{ inset: layout.bgInner }}>
+          <img alt="" className="block max-w-none size-full" src={layout.bg} />
         </div>
-        <span className="text-white font-normal leading-none">{suffix}</span>
       </div>
-      {/* Label */}
-      <p
-        className="text-white font-normal text-xs sm:text-xl lg:text-[24px]"
-        style={{ fontFamily: "var(--font-k2d)" }}
+      <div
+        className="absolute flex items-center justify-center"
+        style={{ inset: layout.numberOuter, containerType: "size" }}
       >
-        {label}
-      </p>
-    </m.div>
+        <div
+          className="flex-none"
+          style={{
+            height: layout.numberH,
+            width: layout.numberW,
+            transform: `rotate(${layout.numberRotate}deg)`,
+          }}
+        >
+          <RollingNumberGroup
+            steps={stat.steps}
+            inView={inView}
+            delay={delay}
+            scale={scale}
+          />
+        </div>
+      </div>
+      <div
+        className="absolute flex items-center justify-center"
+        style={{ inset: layout.suffixOuter, containerType: "size" }}
+      >
+        <div
+          className="flex-none"
+          style={{
+            height: layout.suffixH,
+            width: layout.suffixW,
+            transform: `rotate(${layout.suffixRotate}deg)`,
+          }}
+        >
+          <p
+            className="leading-[normal] not-italic text-white whitespace-nowrap font-normal"
+            style={{ fontFamily: "var(--font-k2d)", fontSize: 48 * scale }}
+          >
+            {stat.suffix}
+          </p>
+        </div>
+      </div>
+      <div
+        className="absolute flex items-center justify-center"
+        style={{ inset: layout.labelOuter, containerType: "size" }}
+      >
+        <div
+          className="flex-none"
+          style={{
+            height: layout.labelH,
+            width: layout.labelW,
+            transform: `rotate(${layout.labelRotate}deg)`,
+          }}
+        >
+          <p
+            className="leading-[normal] not-italic text-white whitespace-nowrap font-bold"
+            style={{
+              fontFamily: "var(--font-k2d)",
+              fontSize: layout.labelSize * scale,
+            }}
+          >
+            {stat.label}
+          </p>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// Faithful port of Figma's "counter group" (node 160:263): a hand holding a
+// phone with the four stat badges floating around it. Renders at any size —
+// used both in the desktop absolute layout and inline on mobile/tablet.
+function StatsCounterGroup({ className }: { className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      setScale(entry.contentRect.width / 993.521);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={cn("relative", className)}
+      style={{ aspectRatio: "993.521 / 923" }}
+    >
+      <div
+        className="absolute inset-x-0 top-0"
+        style={{ aspectRatio: "993.521 / 901.003" }}
+      >
+        <Image
+          src={A.statsHandPhone}
+          alt=""
+          fill
+          className="object-contain"
+          sizes="(min-width: 1024px) 45vw, 90vw"
+        />
+      </div>
+      {STATS.map((stat, i) => (
+        <CounterBadge
+          key={stat.label}
+          stat={stat}
+          layout={BADGE_LAYOUT[i]}
+          inView={inView}
+          delay={i * 0.12}
+          scale={scale}
+        />
+      ))}
+    </div>
   );
 }
 
@@ -605,15 +822,22 @@ function StatsSection() {
   return (
     <section className="relative bg-black w-full overflow-hidden min-h-125 lg:min-h-231.5">
       {/* Tilted card SVG background (Figma: Frame 28, opacity 0.2 gradient) */}
-      <Image
-        src={A.statsCardBg}
-        alt=""
-        width={1460}
-        height={877}
+      <div
         aria-hidden
-        unoptimized
-        className="-left-2.5 absolute top-0 lg:top-12.25 w-[calc(100%+10px)] h-full lg:h-219.25 pointer-events-none select-none"
-      />
+        className="absolute -left-2.5 top-0 lg:top-12.25 w-[calc(100%+10px)] h-full lg:h-219.25 pointer-events-none select-none"
+      >
+        <Image
+          src={A.statsCardBg}
+          alt=""
+          fill
+          unoptimized
+          className="object-cover"
+        />
+      </div>
+      {/* Right composition: hand + phone + floating stat badges */}
+      <div className="absolute inset-y-0 right-0 w-1/2 pointer-events-none hidden lg:flex items-center justify-end">
+        <StatsCounterGroup className="w-full max-w-[993.521px]" />
+      </div>
       {/* Content */}
       <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-0 max-w-360 mx-auto px-5 sm:px-21 py-16 lg:pt-77.75 lg:pb-21.5 min-h-[inherit]">
         {/* Left text */}
@@ -641,14 +865,23 @@ function StatsSection() {
             your story. Har stitch, har colour, har design is all about tu kaun
             hai.
           </p>
-          <BlueOutlineBtn className="self-start mt-4">Print Now</BlueOutlineBtn>
+          <QuoteDialog
+            trigger={
+              <BlueOutlineBtn className="self-start mt-4">
+                Get My Quote
+              </BlueOutlineBtn>
+            }
+          />
         </m.div>
-        {/* Right: 2×2 stat grid */}
-        <div className="grid grid-cols-2 gap-4 sm:gap-x-11.5 sm:gap-y-12.5">
-          {STATS.map((s, i) => (
-            <StatCard key={s.label} {...s} delay={i * 0.12} />
-          ))}
-        </div>
+        {/* Composition, inline: mobile/tablet only (desktop renders it absolutely, above) */}
+        <m.div
+          className="w-full flex justify-center lg:hidden"
+          {...fadeUp(0.2)}
+        >
+          <StatsCounterGroup className="w-full max-w-100 sm:max-w-125" />
+        </m.div>
+        {/* Right: spacer to reserve layout space for the absolutely-positioned composition */}
+        <div className="hidden lg:block lg:w-1/2" aria-hidden />
       </div>
     </section>
   );
@@ -718,29 +951,106 @@ function ClientsSection() {
 }
 
 // ── Quotes Section ────────────────────────────────────────────────────────────
+// Faithful port of Figma's "Group 35" (node 182:356): a neon Instagram-post
+// mockup with a hand pulling a t-shirt out of it, an accent hand cutout, a
+// soft light streak, and a fade-to-black vignette. Insets are % of that
+// group's own 1070.198×947 bounding box, so it scales at any size.
+function QuotesComposition({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn("relative", className)}
+      style={{ aspectRatio: "1070.198 / 947" }}
+    >
+      {/* Blurred light streak (Figma "Ellipse 11") */}
+      <div
+        className="absolute flex items-center justify-center"
+        style={{
+          left: "65.706%",
+          top: "73.07%",
+          width: "34.293%",
+          height: "14.786%",
+        }}
+      >
+        <img
+          alt=""
+          aria-hidden
+          className="block max-w-none"
+          style={{
+            width: "102.84%",
+            height: "18.141%",
+            transform: "rotate(17.87deg)",
+          }}
+          src={A.quotesGlow}
+        />
+      </div>
+      {/* Neon Instagram post with a hand pulling a t-shirt out of it */}
+      <div
+        className="absolute"
+        style={{ left: "35.508%", top: "0%", width: "62.603%", height: "100%" }}
+      >
+        <Image
+          src={A.qArt}
+          alt=""
+          fill
+          className="object-contain"
+          sizes="(min-width: 1024px) 40vw, 85vw"
+        />
+      </div>
+      {/* Accent hand cutout, echoing the artwork's own hand for depth */}
+      <div
+        className="absolute flex items-center justify-center"
+        style={{
+          left: "5.7%",
+          top: "6.442%",
+          width: "80.943%",
+          height: "89.796%",
+        }}
+      >
+        <img
+          alt=""
+          aria-hidden
+          className="block max-w-none"
+          style={{
+            width: "78.156%",
+            height: "63.617%",
+            transform: "rotate(-40.26deg)",
+          }}
+          src={A.quotesHandCutout}
+        />
+      </div>
+      {/* Fade-to-black vignette, blends the artwork into the text column */}
+      <div
+        className="absolute"
+        style={{
+          left: 0,
+          top: "41.817%",
+          width: "45.225%",
+          height: "38.226%",
+          backgroundImage:
+            "linear-gradient(49.318deg, #000 47.725%, transparent 79.224%)",
+        }}
+      />
+    </div>
+  );
+}
+
 function QuotesSection() {
   return (
     <section className="relative w-full bg-black overflow-hidden min-h-125 lg:min-h-204.75">
-      {/* Decorative right imagery */}
+      {/* Decorative imagery: desktop. Figma's composition group (node 182:356)
+          sits at left 19.24% / width 74.32% of the 1440px section — not
+          flush against the right edge as a plain right-half column, so this
+          positions it with those exact percentages instead. */}
       <m.div
-        className="absolute right-0 top-0 h-full w-1/2 pointer-events-none hidden lg:block"
+        className="absolute inset-y-0 pointer-events-none hidden lg:flex items-center"
+        style={{ left: "29.24%", width: "74.32%" }}
         {...slideFrom(60)}
       >
-        <img
-          src={A.qArt}
-          alt=""
-          className="absolute right-0 top-0 h-full w-auto object-contain"
-        />
-        <img
-          src={A.qHand}
-          alt=""
-          className="absolute right-24 top-8 h-[90%] object-contain"
-        />
-        <div className="absolute inset-0 bg-linear-to-r from-black via-black/70 to-transparent" />
+        <QuotesComposition className="w-full max-w-[1070.198px]" />
       </m.div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-360 mx-auto px-6 sm:px-12 lg:px-24 py-16 sm:py-20 min-h-[inherit]">
+      <div className="relative z-10 max-w-360 mx-auto px-6 sm:px-12 lg:px-24 py-16 sm:py-20 min-h-[inherit] flex flex-col gap-10">
         <m.div className="max-w-lg" {...slideFrom(-50)}>
           <h2
             className="text-white text-3xl sm:text-4xl lg:text-[48px] leading-relaxed mb-6"
@@ -776,6 +1086,13 @@ function QuotesSection() {
           </p>
           <BlueOutlineBtn>Get My Quote</BlueOutlineBtn>
         </m.div>
+        {/* Decorative imagery: mobile/tablet, inline below the text */}
+        <m.div
+          className="w-full flex justify-center lg:hidden"
+          {...fadeUp(0.2)}
+        >
+          <QuotesComposition className="w-full max-w-100 sm:max-w-125" />
+        </m.div>
       </div>
     </section>
   );
@@ -786,9 +1103,22 @@ function CtaSection() {
   return (
     <section className="relative w-full overflow-hidden min-h-75 sm:min-h-95">
       <div className="absolute inset-0">
-        <img src={A.ctaBg} alt="" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-black/30" />
+        <Image src={A.ctaBg} alt="" fill className="object-cover" />
       </div>
+
+      {/* Circle icon (Figma "Contact Us", node 215:857) — left 77.71% / top
+          37.38% / width 15.14% of the 1440×420 section. The source export
+          rendered blank (a Figma image-fill export quirk), so this was pulled
+          via get_screenshot instead and circle-masked locally to strip the
+          solid black backdrop the screenshot captured around it. */}
+      <m.img
+        src={A.ctaIcon}
+        alt=""
+        className="hidden sm:block absolute aspect-square pointer-events-none"
+        style={{ left: "77.71%", top: "20.38%", width: "15.14%" }}
+        {...slideFrom(50, 0.15)}
+      />
+
       <div className="relative z-10 max-w-360 mx-auto flex flex-col sm:flex-row items-center justify-between px-6 sm:px-12 lg:px-28 py-14 sm:py-20 gap-8">
         <m.div className="max-w-169.75 w-full" {...slideFrom(-40)}>
           <h2
@@ -808,12 +1138,6 @@ function CtaSection() {
           </p>
           <BlueOutlineBtn>Let&apos;s Talk.</BlueOutlineBtn>
         </m.div>
-        <m.img
-          src={A.ctaIllus}
-          alt=""
-          className="hidden sm:block h-40 sm:h-48 lg:h-54.5 w-auto object-contain shrink-0"
-          {...slideFrom(50, 0.15)}
-        />
       </div>
     </section>
   );

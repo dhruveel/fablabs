@@ -12,13 +12,13 @@ export const metadata: Metadata = {
 };
 
 const A = {
-  heroBg: "/assets/26fc8ce1-f24d-4df6-b54c-fcfa6eba1230.jpg",
+  heroBg: "/assets/contact-hero-bg.jpg",
   phone: "/assets/contact-phone-1.png",
-  sticker: "/assets/contact-wave.png",
+  // sticker: "/assets/contact-wave.png",
   floatIllus: "/assets/contact-person.png",
-  icoPhone: "/assets/5579d9bf-b8f1-4365-99b1-ca3749171ba3.png",
-  icoEmail: "/assets/7442fd42-4b18-44b8-abdb-77d03af4e062.png",
-  icoAddr: "/assets/72644459-83ae-44fc-881f-a59573e46935.png",
+  icoPhone: "/assets/contact-icon-phone.png",
+  icoEmail: "/assets/contact-icon-email.png",
+  icoAddr: "/assets/contact-icon-address.png",
 };
 
 // ── Hero Section (Variant 2) ──────────────────────────────────────────────────
@@ -26,7 +26,7 @@ function HeroSection() {
   return (
     <section className="relative w-full overflow-hidden min-h-95 sm:min-h-130 lg:min-h-160 flex items-center">
       <div className="absolute inset-0 pointer-events-none select-none">
-        <Image src={A.heroBg} alt="" fill className="object-cover" />
+        <Image src={A.heroBg} alt="" fill className="object-cover" sizes="100vw" />
       </div>
       <div className="relative z-10 w-full max-w-360 mx-auto px-6 sm:px-12 lg:px-24 flex justify-end">
         <h1
@@ -53,7 +53,13 @@ function ContactSection() {
       <div className="absolute top-8 lg:top-17 sm:right-3  z-20 pointer-events-none hidden sm:block">
         <div className="relative size-45 lg:size-54.5">
           <div className="absolute inset-[-2.29%_-11.47%_-11.47%_-2.29%]">
-            <Image src={A.floatIllus} alt="" fill className="object-contain" />
+            <Image
+              src={A.floatIllus}
+              alt=""
+              fill
+              className="object-contain"
+              sizes="(max-width: 1023px) 180px, 218px"
+            />
           </div>
         </div>
       </div>
@@ -85,19 +91,18 @@ function ContactSection() {
                 <Image
                   src={A.phone}
                   alt=""
-                  width={307}
-                  height={816}
+                  width={509}
+                  height={498}
                   style={{
-                    width: "308px",
-                    height: "816px",
-                    transform: "rotate(10deg)",
-                    objectPosition: "bottom",
+                    width: "350px",
+                    height: "auto",
+                    transform: "rotate(-10deg)",
                     flexShrink: 0,
                   }}
                 />
               </div>
               {/* Sticker */}
-              <div
+              {/* <div
                 className="absolute pointer-events-none select-none hidden lg:block"
                 style={{
                   left: "71.2px",
@@ -106,8 +111,8 @@ function ContactSection() {
                   height: "179.751px",
                 }}
               >
-                <Image src={A.sticker} alt="" fill className="object-contain" />
-              </div>
+                <Image src={A.sticker} alt="" fill className="object-contain" /> 
+              </div>*/}
 
               {/* Contact info items */}
               <div className="relative z-10 flex flex-col gap-5">

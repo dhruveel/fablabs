@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Geist, Geist_Mono, Inter, K2D, Jersey_10 } from 'next/font/google'
+import { Geist, Geist_Mono, Inter, K2D, Jersey_10, Permanent_Marker, Rock_Salt } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/lib/utils'
 import { SiteChrome } from '@/components/layout/site-chrome'
@@ -21,6 +21,21 @@ const jersey10 = Jersey_10({
   subsets:  ['latin'],
   weight:   ['400'],
   variable: '--font-jersey10',
+  display:  'swap',
+})
+// Free Google Fonts substitute for Figma's "Higher Jump" (a paid brush-marker
+// display font not available via next/font/google) — closest free match for
+// the rough, bold marker-stroke look used on the DropSection heading.
+const permanentMarker = Permanent_Marker({
+  subsets:  ['latin'],
+  weight:   ['400'],
+  variable: '--font-higher-jump',
+  display:  'swap',
+})
+const rockSalt = Rock_Salt({
+  subsets:  ['latin'],
+  weight:   ['400'],
+  variable: '--font-rock-salt',
   display:  'swap',
 })
 
@@ -74,6 +89,8 @@ export default function RootLayout({
         inter.variable,
         k2d.variable,
         jersey10.variable,
+        permanentMarker.variable,
+        rockSalt.variable,
         'font-sans',
       )}
     >

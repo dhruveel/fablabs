@@ -13,12 +13,12 @@ export function QuoteImageCell({ src, filename }: { src: string; filename: strin
         onClick={() => setOpen(true)}
         className="block size-12 overflow-hidden rounded-lg ring-1 ring-border transition-all hover:ring-primary"
       >
-        {/* eslint-disable-next-line @next/next/no-img-element -- base64 data URI, next/image adds no value here */}
+        {/* eslint-disable-next-line @next/next/no-img-element -- authenticated endpoint; next/image's optimizer fetches server-side without our session cookie */}
         <img src={src} alt={filename} className="size-full object-cover" />
       </button>
       <DialogContent className="sm:max-w-lg">
         <DialogTitle className="truncate">{filename}</DialogTitle>
-        {/* eslint-disable-next-line @next/next/no-img-element -- base64 data URI, next/image adds no value here */}
+        {/* eslint-disable-next-line @next/next/no-img-element -- authenticated endpoint; next/image's optimizer fetches server-side without our session cookie */}
         <img src={src} alt={filename} className="w-full rounded-2xl" />
       </DialogContent>
     </Dialog>

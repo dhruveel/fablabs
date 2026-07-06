@@ -2,8 +2,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import { ContactFormSchema } from '@/lib/validations/contact'
 import { verifyRecaptcha } from '@/lib/recaptcha'
 import { createContactSubmission } from '@/lib/db/contact'
+import { rateLimitOrNull } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
+  const rateLimited = await rateLimitOrNull(request, 'contact', {
+    max: 5,
+    windowMs: 10 * 60 * 1000,
+  })
+  if (rateLimited) return rateLimited
+
   let body: unknown
   try {
     body = await request.json()
@@ -22,7 +29,7 @@ export async function POST(request: NextRequest) {
   const { recaptchaToken, ...fields } = parsed.data
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null
 
-  const recaptchaOk = await verifyRecaptcha(recaptchaToken, ip ?? undefined)
+  const recaptchaOk = await verifyRecaptcha(recaptchaToken, ip ?? undefined, 'contact')
   if (!recaptchaOk) {
     return NextResponse.json({ error: 'reCAPTCHA verification failed.' }, { status: 400 })
   }

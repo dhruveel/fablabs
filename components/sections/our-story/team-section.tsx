@@ -82,10 +82,12 @@ export function TeamSection() {
         <Image src={A.bg} alt="" fill className="object-cover" />
       </m.div>
 
-      {/* Stat cards — pulled up to overlap the bottom of the background image */}
+      {/* Stat cards — pulled up to overlap the bottom of the background image.
+          Fixed 209×299px card size (Figma node 195:444) instead of a stretching
+          grid — a 4-col grid would distort these slender cards into wide, squat ones. */}
       <div className="px-4 sm:px-8 lg:px-12 -mt-16 sm:-mt-24 lg:-mt-36 pb-16 sm:pb-20">
         <m.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-300 mx-auto"
+          className="flex flex-wrap justify-center gap-6 sm:gap-12 lg:gap-21 max-w-300 mx-auto"
           variants={staggerCards}
           initial="hidden"
           whileInView="show"
@@ -93,10 +95,16 @@ export function TeamSection() {
         >
           {MILESTONES.map((item) => (
             <m.div key={item.title} variants={cardVariant}>
-              <div className="bg-white rounded-[12px] overflow-hidden h-74.75">
+              <div className="relative z-10 bg-white rounded-[12px] overflow-hidden w-52.25 h-74.75">
                 {/* Gray icon block at top (Figma: 178×157px, left+16px, top+12px) */}
                 <div className="relative bg-[#bbb] rounded-[12px] shadow-[10px_10px_15px_0px_rgba(0,0,0,0.25)] mx-4 mt-3 h-39.25 overflow-hidden">
-                  <Image src={item.img} alt="" fill className="object-cover" />
+                  <Image
+                    src={item.img}
+                    alt=""
+                    fill
+                    className="object-contain"
+                    sizes="177px"
+                  />
                 </div>
                 {/* Text at bottom (Figma: text top at 188px, block bottom at 169px → gap 19px) */}
                 <div className="px-4 pt-4.75 text-center">

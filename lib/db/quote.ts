@@ -1,12 +1,13 @@
 import 'server-only'
 import { ObjectId } from 'mongodb'
 import { getDb } from '@/lib/db/mongodb'
+import { deleteQuoteImage } from '@/lib/storage/quote-images'
 import type { LeadStatus } from '@/lib/constants/lead-status'
 
 export interface QuoteImage {
-  data: string // base64
+  filename: string // generated name of the file on disk
+  originalName: string // user-uploaded filename, for display only
   contentType: string
-  filename: string
 }
 
 export interface QuoteRequest {
@@ -48,6 +49,16 @@ export async function listQuoteRequests(): Promise<QuoteRequestRecord[]> {
   }))
 }
 
+export async function getQuoteRequestById(id: string): Promise<QuoteRequestRecord | null> {
+  if (!ObjectId.isValid(id)) return null
+
+  const db = await getDb()
+  const doc = await db.collection<QuoteRequest>(COLLECTION).findOne({ _id: new ObjectId(id) })
+  if (!doc) return null
+
+  return { ...doc, status: doc.status ?? null, _id: doc._id.toString() }
+}
+
 export async function updateQuoteStatus(id: string, status: LeadStatus | null) {
   if (!ObjectId.isValid(id)) return false
 
@@ -63,9 +74,14 @@ export async function deleteQuoteRequest(id: string) {
   if (!ObjectId.isValid(id)) return false
 
   const db = await getDb()
-  const result = await db.collection<QuoteRequest>(COLLECTION).deleteOne({
+  const deleted = await db.collection<QuoteRequest>(COLLECTION).findOneAndDelete({
     _id: new ObjectId(id),
   })
 
-  return result.deletedCount > 0
+  if (!deleted) return false
+  if (deleted.image) {
+    await deleteQuoteImage(deleted.image.filename)
+  }
+
+  return true
 }

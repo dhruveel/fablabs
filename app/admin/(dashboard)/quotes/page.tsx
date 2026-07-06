@@ -69,8 +69,8 @@ export default async function AdminQuotesPage() {
                   <TableCell>
                     {q.image ? (
                       <QuoteImageCell
-                        src={`data:${q.image.contentType};base64,${q.image.data}`}
-                        filename={q.image.filename}
+                        src={`/api/admin/quotes/${q._id}/image`}
+                        filename={q.image.originalName}
                       />
                     ) : (
                       '—'

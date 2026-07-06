@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# user-uploaded quote reference images (served only via an admin-authenticated route)
+/uploads
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
