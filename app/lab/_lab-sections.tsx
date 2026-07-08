@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { m } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -323,10 +324,12 @@ function ColorShowcaseSection() {
                   className="relative w-full overflow-hidden rounded-[20px]"
                   style={{ aspectRatio: "616/798" }}
                 >
-                  <img
+                  <Image
                     src={c.img}
                     alt={c.name}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(min-width: 640px) 50vw, 100vw"
                   />
                 </div>
                 <div className="px-6 py-5 text-center flex flex-col gap-2">

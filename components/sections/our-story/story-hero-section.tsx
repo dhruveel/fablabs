@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { m } from 'framer-motion'
 
 const imgWordmark = '/assets/our-story-wordmark.svg'
@@ -17,10 +18,13 @@ export function StoryHeroSection() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.9, ease: 'easeOut', delay: 0.1 }}
       >
-        <img
+        <Image
           src={imgPhoto}
           alt=""
-          className="w-full h-full object-cover rounded-l-[11px]"
+          fill
+          priority
+          sizes="46vw"
+          className="object-cover rounded-l-[11px]"
         />
       </m.div>
 
@@ -32,9 +36,15 @@ export function StoryHeroSection() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.85, ease: 'easeOut', delay: 0.35 }}
       >
-        <img
+        {/* width/height are the SVG's real viewBox ratio (696×356) — only used
+            by Image to compute aspect-ratio; className still drives the
+            actual rendered size (w-full h-auto), same as the plain <img>. */}
+        <Image
           src={imgWordmark}
           alt="Our Story"
+          width={696}
+          height={356}
+          unoptimized
           className="w-full h-auto object-contain"
         />
       </m.div>

@@ -38,8 +38,17 @@ function StepCard({ step }: { step: typeof steps[number] }) {
   )
 
   const illustration = (
-    <div className="w-55 h-55 sm:w-70 sm:h-70 lg:w-81.25 lg:h-81.25 shrink-0">
-      <img src={step.img} alt={step.title} className="w-full h-full object-contain" />
+    <div className="relative w-55 h-55 sm:w-70 sm:h-70 lg:w-81.25 lg:h-81.25 shrink-0">
+      {/* unoptimized: these are animated GIFs — the built-in optimizer only
+          outputs a static frame, so bypass it to keep the animation. */}
+      <Image
+        src={step.img}
+        alt={step.title}
+        fill
+        unoptimized
+        sizes="(min-width: 1024px) 325px, (min-width: 640px) 280px, 220px"
+        className="object-contain"
+      />
     </div>
   )
 

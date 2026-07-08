@@ -28,9 +28,21 @@ function HeroSection() {
           alt="FabLabs community — group of young people"
           fill
           className="object-contain"
-          priority
+          preload
+          fetchPriority="high"
         />
       </div>
+
+      {/* Coming soon badge: centered above the heading */}
+      <m.span
+        className="absolute -translate-x-1/2 inline-flex items-center rounded-full bg-[#0A64BC] px-4 py-1.5 text-xs sm:text-sm font-bold uppercase tracking-wide text-white pointer-events-none"
+        style={{ left: '47.33%', top: '5%', fontFamily: 'var(--font-k2d)' }}
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: 'easeOut', delay: 0.15 }}
+      >
+        Coming Soon
+      </m.span>
 
       {/* Heading: center at x=47.33%, top=10.59%, width=52.71% */}
       <h1

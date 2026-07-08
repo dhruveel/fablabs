@@ -34,19 +34,31 @@ export async function createQuoteRequest(data: Omit<QuoteRequest, 'createdAt' | 
   return result.insertedId
 }
 
-export async function listQuoteRequests(): Promise<QuoteRequestRecord[]> {
-  const db = await getDb()
-  const docs = await db
-    .collection<QuoteRequest>(COLLECTION)
-    .find()
-    .sort({ createdAt: -1 })
-    .toArray()
+export interface PaginatedResult<T> {
+  items: T[]
+  total: number
+}
 
-  return docs.map((doc) => ({
-    ...doc,
-    status: doc.status ?? null,
-    _id: doc._id.toString(),
-  }))
+export async function listQuoteRequests(
+  { page = 1, pageSize = 20 }: { page?: number; pageSize?: number } = {},
+): Promise<PaginatedResult<QuoteRequestRecord>> {
+  const db = await getDb()
+  const collection = db.collection<QuoteRequest>(COLLECTION)
+  const skip = (page - 1) * pageSize
+
+  const [docs, total] = await Promise.all([
+    collection.find().sort({ createdAt: -1 }).skip(skip).limit(pageSize).toArray(),
+    collection.countDocuments(),
+  ])
+
+  return {
+    items: docs.map((doc) => ({
+      ...doc,
+      status: doc.status ?? null,
+      _id: doc._id.toString(),
+    })),
+    total,
+  }
 }
 
 export async function getQuoteRequestById(id: string): Promise<QuoteRequestRecord | null> {
@@ -84,4 +96,21 @@ export async function deleteQuoteRequest(id: string) {
   }
 
   return true
+}
+
+export async function deleteQuoteRequests(ids: string[]) {
+  const objectIds = ids.filter(ObjectId.isValid).map((id) => new ObjectId(id))
+  if (objectIds.length === 0) return 0
+
+  const db = await getDb()
+  const collection = db.collection<QuoteRequest>(COLLECTION)
+
+  const toDelete = await collection.find({ _id: { $in: objectIds } }).toArray()
+  const result = await collection.deleteMany({ _id: { $in: objectIds } })
+
+  await Promise.all(
+    toDelete.filter((doc) => doc.image).map((doc) => deleteQuoteImage(doc.image!.filename)),
+  )
+
+  return result.deletedCount
 }

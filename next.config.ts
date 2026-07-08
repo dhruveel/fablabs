@@ -45,6 +45,16 @@ const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
 
+  // lib/storage/quote-images.ts resolves its upload dir with
+  // path.join(process.cwd(), ...) — a dynamic expression the file tracer
+  // can't statically resolve, so it conservatively swept the entire project
+  // (including all ~40MB of public/assets) into every route's serverless
+  // bundle. No server route reads from public/assets at runtime — Next
+  // serves those as static files directly — so it's safe to exclude broadly.
+  outputFileTracingExcludes: {
+    "/**": ["./public/assets/**"],
+  },
+
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [],

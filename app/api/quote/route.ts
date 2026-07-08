@@ -3,6 +3,7 @@ import { QuoteFormSchema } from '@/lib/validations/quote'
 import { createQuoteRequest, type QuoteImage } from '@/lib/db/quote'
 import { saveQuoteImage } from '@/lib/storage/quote-images'
 import { rateLimitOrNull } from '@/lib/rate-limit'
+import { sendQuoteSubmissionEmails } from '@/lib/mail'
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024 // 5MB
 // Multipart overhead (field boundaries, headers) on top of the image itself.
@@ -113,6 +114,9 @@ export async function POST(request: NextRequest) {
     image,
     ip,
   })
+
+  // Fire-and-forget: email delivery must never delay or fail this response.
+  void sendQuoteSubmissionEmails({ name, phone, email: email ?? null, requirements: requirements ?? null })
 
   return NextResponse.json({ success: true }, { status: 201 })
 }

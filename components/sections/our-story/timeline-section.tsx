@@ -79,12 +79,16 @@ function ParallaxImage({ src, speed }: { src: string; speed: number }) {
 function LogoBadge({ className }: { className?: string }) {
   return (
     <div className={cn("relative", className)}>
-      <img
-        src={imgs.badgeRings}
-        alt=""
-        aria-hidden
-        className="absolute inset-[-15%] w-[130%] max-w-none object-contain pointer-events-none"
-      />
+      <div className="absolute inset-[-15%]">
+        <Image
+          src={imgs.badgeRings}
+          alt=""
+          aria-hidden
+          fill
+          sizes="(min-width: 1024px) 166px, (min-width: 640px) 125px, 62px"
+          className="object-contain pointer-events-none"
+        />
+      </div>
       <div className="absolute inset-0 rounded-full bg-black" />
       <div className="absolute inset-0 flex items-center justify-center p-[26%]">
         <Image

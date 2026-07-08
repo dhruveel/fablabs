@@ -189,11 +189,9 @@ function HeartBadge({
       }}
     >
       <BubbleShape variant={featured ? "center" : "side"} color={color} />
-      <img
-        src={heart}
-        alt=""
-        className="absolute left-1/2 top-[12%] -translate-x-1/2 w-[44%] h-[44%]"
-      />
+      <div className="absolute left-1/2 top-[12%] -translate-x-1/2 w-[44%] h-[44%]">
+        <Image src={heart} alt="" fill unoptimized sizes="10vw" />
+      </div>
     </div>
   );
 }
@@ -315,7 +313,7 @@ function NavButtons({
         aria-label="Previous testimonials"
         className="hidden lg:block absolute z-20 top-1/2 -translate-y-1/2 left-[29%] size-10"
       >
-        <img src={ASSETS.navPrev} alt="" className="size-full" />
+        <Image src={ASSETS.navPrev} alt="" fill unoptimized sizes="40px" />
       </button>
       <button
         type="button"
@@ -323,7 +321,7 @@ function NavButtons({
         aria-label="Next testimonials"
         className="hidden lg:block absolute z-20 top-1/2 -translate-y-1/2 left-[68%] size-10"
       >
-        <img src={ASSETS.navNext} alt="" className="size-full" />
+        <Image src={ASSETS.navNext} alt="" fill unoptimized sizes="40px" />
       </button>
     </>
   );

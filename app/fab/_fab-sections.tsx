@@ -149,7 +149,8 @@ function HeroSection() {
           fill
           className="object-cover"
           sizes="100vw"
-          priority
+          preload
+          fetchPriority="high"
         />
       </div>
 
@@ -315,9 +316,11 @@ function PropertiesSection() {
               <Card className="bg-[#222] rounded-[19px] border-0 ring-0 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] overflow-visible">
                 <CardContent className="p-0 flex flex-col">
                   <div className="bg-[#444] rounded-[19px] m-3.5 mb-0 overflow-hidden flex items-center justify-center p-4">
-                    <img
+                    <Image
                       src={p.icon}
                       alt=""
+                      width={512}
+                      height={512}
                       className="size-full max-h-38.5 object-contain"
                     />
                   </div>

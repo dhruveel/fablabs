@@ -26,7 +26,15 @@ function HeroSection() {
   return (
     <section className="relative w-full overflow-hidden min-h-95 sm:min-h-130 lg:min-h-160 flex items-center">
       <div className="absolute inset-0 pointer-events-none select-none">
-        <Image src={A.heroBg} alt="" fill className="object-cover" sizes="100vw" />
+        <Image
+          src={A.heroBg}
+          alt=""
+          fill
+          className="object-cover"
+          sizes="100vw"
+          preload
+          fetchPriority="high"
+        />
       </div>
       <div className="relative z-10 w-full max-w-360 mx-auto px-6 sm:px-12 lg:px-24 flex justify-end">
         <h1

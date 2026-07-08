@@ -66,7 +66,11 @@ export function QuoteDialog({ trigger }: { trigger?: React.ReactElement }) {
           className="cursor-pointer bg-transparent border-0 p-0 text-left font-bold text-lg sm:text-xl hover:opacity-80 transition-opacity"
           style={{ fontFamily: 'var(--font-k2d)' }}
         >
-          <span className="text-[#0A64BC]">Get Your </span>
+          {/* #0A64BC on black is 3.56:1 — fails WCAG AA (4.5:1) at this
+              18px/bold size, just under the "large text" 3:1 threshold.
+              #4F9CE7 (already used elsewhere as the lighter end of the
+              brand gradient) passes at 7.24:1. */}
+          <span className="text-[#4F9CE7]">Get Your </span>
           <span className="text-white">Quote</span>
         </DialogTrigger>
       )}

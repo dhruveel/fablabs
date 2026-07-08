@@ -29,19 +29,31 @@ export async function createContactSubmission(
   return result.insertedId
 }
 
-export async function listContactSubmissions(): Promise<ContactSubmissionRecord[]> {
-  const db = await getDb()
-  const docs = await db
-    .collection<ContactSubmission>(COLLECTION)
-    .find()
-    .sort({ createdAt: -1 })
-    .toArray()
+export interface PaginatedResult<T> {
+  items: T[]
+  total: number
+}
 
-  return docs.map((doc) => ({
-    ...doc,
-    status: doc.status ?? null,
-    _id: doc._id.toString(),
-  }))
+export async function listContactSubmissions(
+  { page = 1, pageSize = 20 }: { page?: number; pageSize?: number } = {},
+): Promise<PaginatedResult<ContactSubmissionRecord>> {
+  const db = await getDb()
+  const collection = db.collection<ContactSubmission>(COLLECTION)
+  const skip = (page - 1) * pageSize
+
+  const [docs, total] = await Promise.all([
+    collection.find().sort({ createdAt: -1 }).skip(skip).limit(pageSize).toArray(),
+    collection.countDocuments(),
+  ])
+
+  return {
+    items: docs.map((doc) => ({
+      ...doc,
+      status: doc.status ?? null,
+      _id: doc._id.toString(),
+    })),
+    total,
+  }
 }
 
 export async function updateContactStatus(id: string, status: LeadStatus | null) {
@@ -64,4 +76,16 @@ export async function deleteContactSubmission(id: string) {
   })
 
   return result.deletedCount > 0
+}
+
+export async function deleteContactSubmissions(ids: string[]) {
+  const objectIds = ids.filter(ObjectId.isValid).map((id) => new ObjectId(id))
+  if (objectIds.length === 0) return 0
+
+  const db = await getDb()
+  const result = await db
+    .collection<ContactSubmission>(COLLECTION)
+    .deleteMany({ _id: { $in: objectIds } })
+
+  return result.deletedCount
 }

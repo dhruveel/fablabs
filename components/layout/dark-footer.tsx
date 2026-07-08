@@ -61,10 +61,6 @@ export function DarkFooter() {
             </p>
             <div className="flex flex-col gap-1 text-lg sm:text-xl font-bold">
               <QuoteDialog />
-              <p>
-                <span className="text-[#0A64BC]">Join the </span>
-                <span className="text-white">Squad</span>
-              </p>
             </div>
           </div>
 
@@ -113,7 +109,6 @@ export function DarkFooter() {
                   href: "/terms-and-conditions",
                 },
                 { label: "Refund policy", href: "#" },
-                { label: "Affiliates program", href: "#" },
               ].map((item) => (
                 <li key={item.label}>
                   <a
@@ -185,7 +180,7 @@ export function DarkFooter() {
 
         <Separator className="mt-8 mb-4 bg-white/10" />
         <p
-          className="text-white/40 text-xs text-center"
+          className="text-white/50 text-xs text-center"
           style={{ fontFamily: "var(--font-k2d)" }}
         >
           © {new Date().getFullYear()} FabLabs. All rights reserved.
