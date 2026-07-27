@@ -21,18 +21,28 @@ export async function verifyRecaptcha(
     body: params,
   })
 
-  if (!res.ok) return false
+  if (!res.ok) {
+    console.error(`[recaptcha] siteverify HTTP ${res.status} for action "${expectedAction}"`)
+    return false
+  }
 
   const data = (await res.json()) as {
     success: boolean
     score?: number
     action?: string
+    'error-codes'?: string[]
   }
 
   if (!data.success || typeof data.score !== 'number' || data.score < MIN_SCORE) {
+    console.error(
+      `[recaptcha] rejected for action "${expectedAction}": success=${data.success} score=${data.score} errors=${data['error-codes']?.join(',')}`,
+    )
     return false
   }
   if (expectedAction && data.action !== expectedAction) {
+    console.error(
+      `[recaptcha] action mismatch: expected "${expectedAction}", got "${data.action}"`,
+    )
     return false
   }
 

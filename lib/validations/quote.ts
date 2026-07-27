@@ -5,6 +5,7 @@ export const QuoteFormSchema = z.object({
   phone: z.string().trim().min(7, 'Enter a valid phone number.').max(20),
   email: z.email('Enter a valid email.').trim().max(254).optional(),
   requirements: z.string().trim().max(5000).optional(),
+  recaptchaToken: z.string().min(1, 'Please complete the reCAPTCHA.'),
 })
 
 export type QuoteFormInput = z.infer<typeof QuoteFormSchema>

@@ -2,12 +2,15 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 
 const rateLimitOrNull = vi.fn().mockResolvedValue(null);
+const rateLimitByKeyOrNull = vi.fn().mockResolvedValue(null);
 const createQuoteRequest = vi.fn().mockResolvedValue("some-id");
 const saveQuoteImage = vi.fn().mockResolvedValue("saved-filename.png");
+const verifyRecaptcha = vi.fn().mockResolvedValue(true);
 
-vi.mock("@/lib/rate-limit", () => ({ rateLimitOrNull }));
+vi.mock("@/lib/rate-limit", () => ({ rateLimitOrNull, rateLimitByKeyOrNull }));
 vi.mock("@/lib/db/quote", () => ({ createQuoteRequest }));
 vi.mock("@/lib/storage/quote-images", () => ({ saveQuoteImage }));
+vi.mock("@/lib/recaptcha", () => ({ verifyRecaptcha }));
 
 const { POST } = await import("@/app/api/quote/route");
 
@@ -28,6 +31,7 @@ function validFormData(overrides: Record<string, string> = {}) {
   const fd = new FormData();
   fd.set("name", overrides.name ?? "Karthik Raj");
   fd.set("phone", overrides.phone ?? "9876543210");
+  fd.set("recaptchaToken", overrides.recaptchaToken ?? "test-token");
   if (overrides.email !== undefined) fd.set("email", overrides.email);
   if (overrides.requirements !== undefined) fd.set("requirements", overrides.requirements);
   return fd;
@@ -36,8 +40,27 @@ function validFormData(overrides: Record<string, string> = {}) {
 describe("POST /api/quote", () => {
   beforeEach(() => {
     rateLimitOrNull.mockReset().mockResolvedValue(null);
+    rateLimitByKeyOrNull.mockReset().mockResolvedValue(null);
     createQuoteRequest.mockReset().mockResolvedValue("some-id");
     saveQuoteImage.mockReset().mockResolvedValue("saved-filename.png");
+    verifyRecaptcha.mockReset().mockResolvedValue(true);
+  });
+
+  it("returns 400 when reCAPTCHA verification fails", async () => {
+    verifyRecaptcha.mockResolvedValue(false);
+
+    const res = await POST(makeRequest(validFormData()));
+    expect(res.status).toBe(400);
+    expect(createQuoteRequest).not.toHaveBeenCalled();
+  });
+
+  it("rate-limits by destination email independent of IP", async () => {
+    const limited = new Response(null, { status: 429 });
+    rateLimitByKeyOrNull.mockResolvedValue(limited);
+
+    const res = await POST(makeRequest(validFormData({ email: "victim@example.com" })));
+    expect(res).toBe(limited);
+    expect(createQuoteRequest).not.toHaveBeenCalled();
   });
 
   it("returns the rate limiter's response untouched when rate-limited", async () => {

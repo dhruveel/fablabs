@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { QuoteFormSchema } from '@/lib/validations/quote'
 import { createQuoteRequest, type QuoteImage } from '@/lib/db/quote'
 import { saveQuoteImage } from '@/lib/storage/quote-images'
-import { rateLimitOrNull } from '@/lib/rate-limit'
+import { rateLimitByKeyOrNull, rateLimitOrNull } from '@/lib/rate-limit'
 import { sendQuoteSubmissionEmails } from '@/lib/mail'
+import { verifyRecaptcha } from '@/lib/recaptcha'
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024 // 5MB
 // Multipart overhead (field boundaries, headers) on top of the image itself.
@@ -66,6 +67,7 @@ export async function POST(request: NextRequest) {
     phone: emptyToUndefined(formData.get('phone')) ?? '',
     email: emptyToUndefined(formData.get('email')),
     requirements: emptyToUndefined(formData.get('requirements')),
+    recaptchaToken: emptyToUndefined(formData.get('recaptchaToken')) ?? '',
   })
 
   if (!parsed.success) {
@@ -73,6 +75,26 @@ export async function POST(request: NextRequest) {
       { error: 'Invalid form data.', issues: parsed.error.flatten().fieldErrors },
       { status: 400 },
     )
+  }
+
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null
+
+  const recaptchaOk = await verifyRecaptcha(parsed.data.recaptchaToken, ip ?? undefined, 'quote')
+  if (!recaptchaOk) {
+    return NextResponse.json({ error: 'reCAPTCHA verification failed.' }, { status: 400 })
+  }
+
+  // IP-independent cap on how often a given destination address can be sent
+  // a "quote received" confirmation email — without this, this endpoint's
+  // email step doubles as an anonymous mailer for any address the caller
+  // types in, regardless of IP or reCAPTCHA outcome.
+  if (parsed.data.email) {
+    const emailLimited = await rateLimitByKeyOrNull(
+      'quote-email',
+      parsed.data.email.trim().toLowerCase(),
+      { max: 5, windowMs: 60 * 60 * 1000 },
+    )
+    if (emailLimited) return emailLimited
   }
 
   const imageField = formData.get('image')
@@ -104,7 +126,6 @@ export async function POST(request: NextRequest) {
   }
 
   const { name, phone, email, requirements } = parsed.data
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null
 
   await createQuoteRequest({
     name,

@@ -1,5 +1,6 @@
 'use client'
 
+import Script from 'next/script'
 import { useRef, useState } from 'react'
 import { UploadCloudIcon, CheckCircleIcon } from 'lucide-react'
 import {
@@ -10,6 +11,17 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 
+const SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? ''
+
+declare global {
+  interface Window {
+    grecaptcha?: {
+      ready: (callback: () => void) => void
+      execute: (siteKey: string, options: { action: string }) => Promise<string>
+    }
+  }
+}
+
 export function QuoteDialog({ trigger }: { trigger?: React.ReactElement }) {
   const fileRef = useRef<HTMLInputElement>(null)
   const [fileName, setFileName] = useState<string | null>(null)
@@ -17,14 +29,19 @@ export function QuoteDialog({ trigger }: { trigger?: React.ReactElement }) {
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [open, setOpen] = useState(false)
+  const [recaptchaReady, setRecaptchaReady] = useState(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (!window.grecaptcha) return
     setPending(true)
     setError(null)
 
     try {
+      const token = await window.grecaptcha.execute(SITE_KEY, { action: 'quote' })
       const formData = new FormData(e.currentTarget)
+      formData.set('recaptchaToken', token)
+
       const res = await fetch('/api/quote', { method: 'POST', body: formData })
 
       if (!res.ok) {
@@ -54,44 +71,54 @@ export function QuoteDialog({ trigger }: { trigger?: React.ReactElement }) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      {trigger ? (
-        // Custom triggers here are styled wrapper components (motion span/div
-        // around a shadcn Button), not always a bare <button> at the root —
-        // nativeButton lets Base UI skip the "must be a real button" check
-        // and fall back to ARIA semantics instead.
-        <DialogTrigger render={trigger} nativeButton={false} />
-      ) : (
-        <DialogTrigger
-          className="cursor-pointer bg-transparent border-0 p-0 text-left font-bold text-lg sm:text-xl hover:opacity-80 transition-opacity"
-          style={{ fontFamily: 'var(--font-k2d)' }}
-        >
-          {/* #0A64BC on black is 3.56:1 — fails WCAG AA (4.5:1) at this
-              18px/bold size, just under the "large text" 3:1 threshold.
-              #4F9CE7 (already used elsewhere as the lighter end of the
-              brand gradient) passes at 7.24:1. */}
-          <span className="text-[#4F9CE7]">Get Your </span>
-          <span className="text-white">Quote</span>
-        </DialogTrigger>
-      )}
+    <>
+      {/* reCAPTCHA v3 API script — invisible, no npm package required */}
+      <Script
+        src={`https://www.google.com/recaptcha/api.js?render=${SITE_KEY}`}
+        strategy="lazyOnload"
+        onLoad={() => window.grecaptcha?.ready(() => setRecaptchaReady(true))}
+      />
 
-      <DialogContent
-        className="bg-[#0d0d0d] border border-white/10 text-white sm:max-w-lg p-0 overflow-y-auto max-h-[90svh] rounded-[24px]"
-      >
-        {submitted ? (
-          <SuccessView onClose={() => setOpen(false)} />
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        {trigger ? (
+          // Custom triggers here are styled wrapper components (motion span/div
+          // around a shadcn Button), not always a bare <button> at the root —
+          // nativeButton lets Base UI skip the "must be a real button" check
+          // and fall back to ARIA semantics instead.
+          <DialogTrigger render={trigger} nativeButton={false} />
         ) : (
-          <QuoteForm
-            fileName={fileName}
-            onFileChange={setFileName}
-            fileRef={fileRef}
-            onSubmit={handleSubmit}
-            pending={pending}
-            error={error}
-          />
+          <DialogTrigger
+            className="cursor-pointer bg-transparent border-0 p-0 text-left font-bold text-lg sm:text-xl hover:opacity-80 transition-opacity"
+            style={{ fontFamily: 'var(--font-k2d)' }}
+          >
+            {/* #0A64BC on black is 3.56:1 — fails WCAG AA (4.5:1) at this
+                18px/bold size, just under the "large text" 3:1 threshold.
+                #4F9CE7 (already used elsewhere as the lighter end of the
+                brand gradient) passes at 7.24:1. */}
+            <span className="text-[#4F9CE7]">Get Your </span>
+            <span className="text-white">Quote</span>
+          </DialogTrigger>
         )}
-      </DialogContent>
-    </Dialog>
+
+        <DialogContent
+          className="bg-[#0d0d0d] border border-white/10 text-white sm:max-w-lg p-0 overflow-y-auto max-h-[90svh] rounded-[24px]"
+        >
+          {submitted ? (
+            <SuccessView onClose={() => setOpen(false)} />
+          ) : (
+            <QuoteForm
+              fileName={fileName}
+              onFileChange={setFileName}
+              fileRef={fileRef}
+              onSubmit={handleSubmit}
+              pending={pending}
+              error={error}
+              submitDisabled={!recaptchaReady}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 
@@ -131,6 +158,7 @@ function QuoteForm({
   onSubmit,
   pending,
   error,
+  submitDisabled,
 }: {
   fileName: string | null
   onFileChange: (name: string | null) => void
@@ -138,6 +166,7 @@ function QuoteForm({
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
   pending: boolean
   error: string | null
+  submitDisabled: boolean
 }) {
   const inputCls =
     'h-12 rounded-full bg-black border border-white/15 text-white placeholder:text-white/30 px-5 text-sm focus-visible:border-[#0A64BC] focus-visible:ring-[#0A64BC]/20'
@@ -242,7 +271,7 @@ function QuoteForm({
         {/* Submit */}
         <button
           type="submit"
-          disabled={pending}
+          disabled={pending || submitDisabled}
           className="mt-1 h-12 rounded-full font-bold text-white text-sm transition-opacity hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
           style={{
             fontFamily: 'var(--font-k2d)',

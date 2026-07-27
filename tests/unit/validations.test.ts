@@ -53,6 +53,7 @@ describe("QuoteFormSchema", () => {
   const valid = {
     name: "Karthik Raj",
     phone: "9876543210",
+    recaptchaToken: "test-token",
   };
 
   it("accepts a submission with only the required fields", () => {
@@ -76,6 +77,11 @@ describe("QuoteFormSchema", () => {
 
   it("rejects an invalid optional email", () => {
     const result = QuoteFormSchema.safeParse({ ...valid, email: "nope" });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a missing recaptcha token", () => {
+    const result = QuoteFormSchema.safeParse({ ...valid, recaptchaToken: "" });
     expect(result.success).toBe(false);
   });
 });
