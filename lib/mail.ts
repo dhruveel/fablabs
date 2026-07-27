@@ -1,7 +1,16 @@
 import 'server-only'
 import nodemailer from 'nodemailer'
 
+// Cached and pooled across sends (and across warm invocations, same pattern
+// as lib/db/mongodb.ts) so concurrent/successive emails reuse a handful of
+// already-authenticated SMTP connections instead of renegotiating one per send.
+const globalForMail = globalThis as unknown as {
+  _mailTransport?: nodemailer.Transporter
+}
+
 function getTransport() {
+  if (globalForMail._mailTransport) return globalForMail._mailTransport
+
   const host = process.env.SMTP_HOST
   const port = Number(process.env.SMTP_PORT ?? 587)
   const user = process.env.SMTP_USER
@@ -11,12 +20,15 @@ function getTransport() {
     throw new Error('Missing SMTP_HOST, SMTP_USER, or SMTP_PASS environment variable')
   }
 
-  return nodemailer.createTransport({
+  globalForMail._mailTransport = nodemailer.createTransport({
     host,
     port,
     secure: port === 465,
     auth: { user, pass },
+    pool: true,
   })
+
+  return globalForMail._mailTransport
 }
 
 export async function sendPasswordResetEmail(to: string, resetUrl: string) {
@@ -63,7 +75,7 @@ interface ContactSubmissionEmailData {
   phone: string
   email: string
   subject: string
-  message: string
+  message: string | null
 }
 
 async function sendContactAdminNotification(data: ContactSubmissionEmailData) {
@@ -78,7 +90,7 @@ async function sendContactAdminNotification(data: ContactSubmissionEmailData) {
     to,
     replyTo: data.email,
     subject: `New contact submission: ${data.subject}`,
-    text: `New contact form submission.\n\nName: ${data.name}\nPhone: ${data.phone}\nEmail: ${data.email}\nSubject: ${data.subject}\n\nMessage:\n${data.message}`,
+    text: `New contact form submission.\n\nName: ${data.name}\nPhone: ${data.phone}\nEmail: ${data.email}\nSubject: ${data.subject}\n\nMessage:\n${data.message ?? '—'}`,
     html: `
       <p>New contact form submission.</p>
       <ul>
@@ -88,7 +100,7 @@ async function sendContactAdminNotification(data: ContactSubmissionEmailData) {
         <li><strong>Subject:</strong> ${escapeHtml(data.subject)}</li>
       </ul>
       <p><strong>Message:</strong></p>
-      <p>${escapeHtml(data.message)}</p>
+      <p>${data.message ? escapeHtml(data.message) : '—'}</p>
     `,
   })
 }

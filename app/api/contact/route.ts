@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { recaptchaToken, ...fields } = parsed.data
+  const { name, phone, email, subject, message, recaptchaToken } = parsed.data
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null
 
   const recaptchaOk = await verifyRecaptcha(recaptchaToken, ip ?? undefined, 'contact')
@@ -35,10 +35,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'reCAPTCHA verification failed.' }, { status: 400 })
   }
 
-  await createContactSubmission({ ...fields, ip })
+  await createContactSubmission({ name, phone, email, subject, message: message ?? null, ip })
 
   // Fire-and-forget: email delivery must never delay or fail this response.
-  void sendContactSubmissionEmails(fields)
+  void sendContactSubmissionEmails({ name, phone, email, subject, message: message ?? null })
 
   return NextResponse.json({ success: true }, { status: 201 })
 }

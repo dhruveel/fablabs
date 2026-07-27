@@ -38,9 +38,22 @@ describe("ContactFormSchema", () => {
     expect(result.success).toBe(false);
   });
 
-  it("rejects a message shorter than 5 characters", () => {
-    const result = ContactFormSchema.safeParse({ ...valid, message: "hi" });
-    expect(result.success).toBe(false);
+  it("accepts a submission with no message", () => {
+    const result = ContactFormSchema.safeParse({
+      name: valid.name,
+      phone: valid.phone,
+      email: valid.email,
+      subject: valid.subject,
+      recaptchaToken: valid.recaptchaToken,
+    });
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.message).toBeUndefined();
+  });
+
+  it("treats a blank message as absent, not an empty string", () => {
+    const result = ContactFormSchema.safeParse({ ...valid, message: "   " });
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.message).toBeUndefined();
   });
 
   it("rejects a missing recaptcha token", () => {

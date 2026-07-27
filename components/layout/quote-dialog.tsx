@@ -33,7 +33,11 @@ export function QuoteDialog({ trigger }: { trigger?: React.ReactElement }) {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (!window.grecaptcha) return
+    if (!window.grecaptcha) {
+      console.error('[quote-dialog] grecaptcha not loaded at submit time')
+      setError('Something went wrong. Please try again.')
+      return
+    }
     setPending(true)
     setError(null)
 
@@ -51,7 +55,8 @@ export function QuoteDialog({ trigger }: { trigger?: React.ReactElement }) {
       }
 
       setSubmitted(true)
-    } catch {
+    } catch (err) {
+      console.error('[quote-dialog] submission failed:', err)
       setError('Something went wrong. Please try again.')
     } finally {
       setPending(false)

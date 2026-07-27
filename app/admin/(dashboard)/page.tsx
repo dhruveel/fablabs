@@ -89,7 +89,7 @@ export default async function AdminContactsPage({
                     <TableCell>{c.phone}</TableCell>
                     <TableCell>{c.email}</TableCell>
                     <TableCell>{c.subject}</TableCell>
-                    <TableCell className="max-w-80 whitespace-normal">{c.message}</TableCell>
+                    <TableCell className="max-w-80 whitespace-normal">{c.message ?? '—'}</TableCell>
                     <TableCell>
                       <StatusSelect resource="contacts" id={c._id} status={c.status} />
                     </TableCell>
