@@ -58,7 +58,12 @@ export function ContactForm() {
     e.preventDefault()
 
     const form = formRef.current
-    if (!form || !window.grecaptcha) return
+    if (!form || !window.grecaptcha) {
+      console.error('[contact-form] grecaptcha not loaded at submit time')
+      setErrorMessage('Something went wrong. Please try again.')
+      setStatus('error')
+      return
+    }
 
     setStatus('submitting')
     setErrorMessage(null)
@@ -89,7 +94,8 @@ export function ContactForm() {
 
       form.reset()
       setStatus('success')
-    } catch {
+    } catch (err) {
+      console.error('[contact-form] submission failed:', err)
       setErrorMessage('Something went wrong. Please try again.')
       setStatus('error')
     }
@@ -139,9 +145,8 @@ export function ContactForm() {
         />
         <Textarea
           name="message"
-          placeholder="Message"
+          placeholder="Message (optional)"
           rows={6}
-          required
           className="min-h-40 sm:min-h-46 rounded-[29px] bg-black border border-white/75 text-white placeholder:text-[#5f5e5e] px-6 py-4 text-base resize-none focus-visible:border-[#0A64BC] focus-visible:ring-[#0A64BC]/20"
           style={{ fontFamily: 'var(--font-k2d)' }}
         />

@@ -93,6 +93,13 @@ describe("POST /api/contact", () => {
     expect(savedArgs).not.toHaveProperty("recaptchaToken");
   });
 
+  it("stores a missing or blank message as null, not an empty string", async () => {
+    await POST(makeRequest({ ...validBody, message: "   " }));
+
+    const [savedArgs] = createContactSubmission.mock.calls[0];
+    expect(savedArgs.message).toBeNull();
+  });
+
   it("passes the client IP from x-forwarded-for through to both recaptcha and storage", async () => {
     await POST(makeRequest(validBody, { "x-forwarded-for": "9.9.9.9, 1.1.1.1" }));
 

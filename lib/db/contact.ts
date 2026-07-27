@@ -8,7 +8,7 @@ export interface ContactSubmission {
   phone: string
   email: string
   subject: string
-  message: string
+  message: string | null
   status: LeadStatus | null
   createdAt: Date
   ip: string | null
@@ -43,7 +43,7 @@ export async function listContactSubmissions(
 
   const [docs, total] = await Promise.all([
     collection.find().sort({ createdAt: -1 }).skip(skip).limit(pageSize).toArray(),
-    collection.countDocuments(),
+    collection.estimatedDocumentCount(),
   ])
 
   return {
