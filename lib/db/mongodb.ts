@@ -1,12 +1,6 @@
 import 'server-only'
 import { Db, MongoClient } from 'mongodb'
 
-const uri = process.env.MONGODB_URI
-
-if (!uri) {
-  throw new Error('Missing MONGODB_URI environment variable')
-}
-
 // Cache the client across hot reloads in dev and across warm lambda
 // invocations in prod so we don't open a new connection per request.
 const globalForMongo = globalThis as unknown as {
@@ -14,14 +8,18 @@ const globalForMongo = globalThis as unknown as {
   _mongoIndexesPromise?: Promise<unknown>
 }
 
-const client = globalForMongo._mongoClientPromise
-  ? undefined
-  : new MongoClient(uri)
-
-const clientPromise = globalForMongo._mongoClientPromise ?? client!.connect()
-
-if (!globalForMongo._mongoClientPromise) {
-  globalForMongo._mongoClientPromise = clientPromise
+// Lazy so importing this module (e.g. Next's build-time page-data
+// collection, which evaluates route handler modules without a runtime
+// MONGODB_URI) doesn't attempt a connection or throw.
+function getClientPromise(): Promise<MongoClient> {
+  if (!globalForMongo._mongoClientPromise) {
+    const uri = process.env.MONGODB_URI
+    if (!uri) {
+      throw new Error('Missing MONGODB_URI environment variable')
+    }
+    globalForMongo._mongoClientPromise = new MongoClient(uri).connect()
+  }
+  return globalForMongo._mongoClientPromise
 }
 
 // createIndex() is a no-op when an equivalent index already exists, so it's
@@ -46,7 +44,7 @@ function ensureIndexes(db: Db) {
 }
 
 export async function getDb() {
-  const client = await clientPromise
+  const client = await getClientPromise()
   const db = client.db(process.env.MONGODB_DB || undefined)
   await ensureIndexes(db)
   return db
