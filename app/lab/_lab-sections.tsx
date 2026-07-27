@@ -1,17 +1,19 @@
 ﻿"use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { m } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { QuoteDialog } from "@/components/layout/quote-dialog";
 
 // ── Assets ────────────────────────────────────────────────────────────────────
 const A = {
   heroBg: "/assets/lab-hero-bg.jpg",
-  scarlet: "/assets/fce3024e-6aa3-4f09-a61e-4841250323d0.jpg",
-  coral: "/assets/40d41562-a742-4292-8ea8-3e4db3e95856.png",
-  lavender: "/assets/faf20288-7f7e-4366-97f0-a70c8d6a6657.png",
-  charcoal: "/assets/8f37e66d-99d2-4f48-903c-dc478ae34fb5.png",
+  scarlet: "/assets/lab-color-scarlet-red.jpg",
+  coral: "/assets/lab-color-coral-pink.png",
+  lavender: "/assets/lab-color-lavender.png",
+  charcoal: "/assets/lab-color-charcoal-grey.png",
 };
 
 // ── Data ─────────────────────────────────────────────────────────────────────
@@ -87,10 +89,10 @@ const VP = { once: true, margin: "-80px" };
 
 function fadeUp(delay = 0) {
   return {
-    initial: { opacity: 0, y: 40 },
+    initial: { opacity: 0, y: 150 },
     whileInView: { opacity: 1, y: 0 },
     viewport: VP,
-    transition: { duration: 0.65, ease: "easeOut" as const, delay },
+    transition: { duration: 0.35, ease: "easeOut" as const, delay },
   };
 }
 
@@ -120,12 +122,15 @@ function HeroSection() {
   return (
     <section className="relative w-full bg-black overflow-hidden min-h-125 sm:min-h-162.5 lg:h-217.5 flex items-center justify-center">
       {/* Parallelogram-clipped background (Figma node 211:587) */}
-      <svg
+      <m.svg
         viewBox="0 0 1393 843"
         preserveAspectRatio="xMidYMid slice"
         xmlns="http://www.w3.org/2000/svg"
         className="absolute inset-0 w-full h-full pointer-events-none select-none"
         aria-hidden="true"
+        initial={{ opacity: 0, y: 200 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, ease: "easeOut" }}
       >
         <defs>
           <clipPath id="labHeroClip">
@@ -142,7 +147,7 @@ function HeroSection() {
           clipPath="url(#labHeroClip)"
           opacity={0.78}
         />
-      </svg>
+      </m.svg>
 
       <div className="relative z-10 px-6 text-center max-w-249.75 mx-auto">
         <m.h1
@@ -151,9 +156,9 @@ function HeroSection() {
             fontFamily: "var(--font-k2d)",
             textShadow: "4px 4px 4px rgba(0,0,0,0.37)",
           }}
-          initial={{ opacity: 0, scale: 0.9, y: 30 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          initial={{ opacity: 0, y: 300 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.1, ease: "easeOut", delay: 0.25 }}
         >
           Printing Perfection: Crafting Your Vision
         </m.h1>
@@ -319,10 +324,12 @@ function ColorShowcaseSection() {
                   className="relative w-full overflow-hidden rounded-[20px]"
                   style={{ aspectRatio: "616/798" }}
                 >
-                  <img
+                  <Image
                     src={c.img}
                     alt={c.name}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(min-width: 640px) 50vw, 100vw"
                   />
                 </div>
                 <div className="px-6 py-5 text-center flex flex-col gap-2">
@@ -352,15 +359,19 @@ function ColorShowcaseSection() {
       </m.div>
 
       <m.div className="flex justify-center mt-12 sm:mt-16" {...fadeUp(0.25)}>
-        <m.div whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.97 }}>
-          <Button
-            variant="outline"
-            className="h-auto rounded-full border-2 border-[#0A64BC] bg-transparent px-8 py-3 text-[#0A64BC] hover:bg-[#0A64BC]/10 hover:text-[#0A64BC] text-base sm:text-xl whitespace-nowrap"
-            style={{ fontFamily: "var(--font-jersey10)" }}
-          >
-            Get My Quote
-          </Button>
-        </m.div>
+        <QuoteDialog
+          trigger={
+            <m.div whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.97 }}>
+              <Button
+                variant="outline"
+                className="h-auto rounded-full border-2 border-[#0A64BC] bg-transparent px-8 py-3 text-[#0A64BC] hover:bg-[#0A64BC]/10 hover:text-[#0A64BC] text-base sm:text-xl whitespace-nowrap"
+                style={{ fontFamily: "var(--font-jersey10)" }}
+              >
+                Get My Quote
+              </Button>
+            </m.div>
+          }
+        />
       </m.div>
     </section>
   );

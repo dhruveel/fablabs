@@ -3,8 +3,15 @@ import bcrypt from 'bcryptjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { ResetPasswordSchema } from '@/lib/validations/admin'
 import { resetAdminPassword } from '@/lib/db/admin'
+import { rateLimitOrNull } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
+  const rateLimited = await rateLimitOrNull(request, 'admin-reset-password', {
+    max: 10,
+    windowMs: 15 * 60 * 1000,
+  })
+  if (rateLimited) return rateLimited
+
   let body: unknown
   try {
     body = await request.json()

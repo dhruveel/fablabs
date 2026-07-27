@@ -3,10 +3,17 @@ import { NextRequest, NextResponse } from 'next/server'
 import { ForgotPasswordSchema } from '@/lib/validations/admin'
 import { findAdminByEmail, setAdminResetToken } from '@/lib/db/admin'
 import { sendPasswordResetEmail } from '@/lib/mail'
+import { rateLimitOrNull } from '@/lib/rate-limit'
 
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000 // 1 hour
 
 export async function POST(request: NextRequest) {
+  const rateLimited = await rateLimitOrNull(request, 'admin-forgot-password', {
+    max: 5,
+    windowMs: 60 * 60 * 1000,
+  })
+  if (rateLimited) return rateLimited
+
   let body: unknown
   try {
     body = await request.json()

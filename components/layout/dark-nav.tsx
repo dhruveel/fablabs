@@ -63,6 +63,7 @@ export function DarkNav() {
             <Button
               variant="ghost"
               size="icon"
+              aria-label="View shop"
               className="text-[#0A64BC]/70 hover:text-[#0A64BC]"
             >
               <ShoppingBagIcon className="size-5" />

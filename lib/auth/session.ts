@@ -1,4 +1,5 @@
 import 'server-only'
+import { cache } from 'react'
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 
@@ -9,6 +10,9 @@ function getSecretKey() {
   const secret = process.env.SESSION_SECRET
   if (!secret) {
     throw new Error('Missing SESSION_SECRET environment variable')
+  }
+  if (secret.length < 32) {
+    throw new Error('SESSION_SECRET must be at least 32 characters for HS256 signing')
   }
   return new TextEncoder().encode(secret)
 }
@@ -57,11 +61,14 @@ export async function deleteAdminSession() {
   cookieStore.delete(SESSION_COOKIE)
 }
 
-export async function verifyAdminSession() {
+// Memoized per-request: the admin layout and each admin page independently
+// verify the session, so this avoids redundant JWT verification within the
+// same render.
+export const verifyAdminSession = cache(async () => {
   const cookieStore = await cookies()
   const session = cookieStore.get(SESSION_COOKIE)?.value
   const payload = await decrypt(session)
 
   if (!payload?.email) return null
   return { email: payload.email }
-}
+})

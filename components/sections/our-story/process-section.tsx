@@ -1,16 +1,17 @@
 ﻿'use client'
 
+import Image from 'next/image'
 import { m } from 'framer-motion'
 
-const imgFlow = '/assets/ce500f86-01e0-4c96-b8de-0ab9a9a7bf38.png'
+const imgFlow = '/assets/our-story-process-flow-bg.png'
 
 const steps = [
-  { title: 'Idea Kicks In',       desc: "When students plan an event or fest, one of their first thoughts is, 'Let\\'s get custom merchandise made!'", img: '/assets/ef7e2b37-f6ca-4e67-8b22-978ba7725f9a.gif', labelTop: true  },
-  { title: 'Connect with FabLabs',desc: 'They meet our founder, Vimal—easygoing, friendly, and just like talking to a friend.',                        img: '/assets/888b29a0-94f2-48b6-b085-99bffba2cda0.gif', labelTop: true  },
-  { title: 'We Manufacture',      desc: 'The cotton is carefully sourced and stitching begins. Every step is handled in-house with no compromises on quality.', img: '/assets/9258a937-c116-4b7f-a402-16ac08748862.gif', labelTop: true  },
-  { title: 'Designs Get Printed', desc: 'Their logos, names, and fest graphics are fully customized and printed to perfection.',                        img: '/assets/f3a8debe-4e97-4a0a-8d90-3c50951b4009.gif', labelTop: false },
-  { title: 'Fast Dispatch',       desc: 'Timely delivery so students get merch before the event.',                                                      img: '/assets/c2f3baae-4b64-4287-9496-cee85904066a.gif', labelTop: false },
-  { title: 'Wear & Celebrate',    desc: 'Students get their merch and enjoy the event together, same fits, same vibe, full memories.',                  img: '/assets/f53f4915-0f1a-4a06-897f-2d1c27957748.gif', labelTop: false },
+  { title: 'Idea Kicks In',       desc: "When students plan an event or fest, one of their first thoughts is, 'Let\\'s get custom merchandise made!'", img: '/assets/our-story-process-idea-kicks-in.gif', labelTop: true  },
+  { title: 'Connect with FabLabs',desc: 'They meet our founder, Vimal—easygoing, friendly, and just like talking to a friend.',                        img: '/assets/our-story-process-connect-fablabs.gif', labelTop: true  },
+  { title: 'We Manufacture',      desc: 'The cotton is carefully sourced and stitching begins. Every step is handled in-house with no compromises on quality.', img: '/assets/our-story-process-we-manufacture.gif', labelTop: true  },
+  { title: 'Designs Get Printed', desc: 'Their logos, names, and fest graphics are fully customized and printed to perfection.',                        img: '/assets/our-story-process-designs-printed.gif', labelTop: false },
+  { title: 'Fast Dispatch',       desc: 'Timely delivery so students get merch before the event.',                                                      img: '/assets/our-story-process-fast-dispatch.gif', labelTop: false },
+  { title: 'Wear & Celebrate',    desc: 'Students get their merch and enjoy the event together, same fits, same vibe, full memories.',                  img: '/assets/our-story-process-wear-celebrate.gif', labelTop: false },
 ]
 
 const VP = { once: true, margin: '-80px' }
@@ -37,8 +38,17 @@ function StepCard({ step }: { step: typeof steps[number] }) {
   )
 
   const illustration = (
-    <div className="w-55 h-55 sm:w-70 sm:h-70 lg:w-81.25 lg:h-81.25 shrink-0">
-      <img src={step.img} alt={step.title} className="w-full h-full object-contain" />
+    <div className="relative w-55 h-55 sm:w-70 sm:h-70 lg:w-81.25 lg:h-81.25 shrink-0">
+      {/* unoptimized: these are animated GIFs — the built-in optimizer only
+          outputs a static frame, so bypass it to keep the animation. */}
+      <Image
+        src={step.img}
+        alt={step.title}
+        fill
+        unoptimized
+        sizes="(min-width: 1024px) 325px, (min-width: 640px) 280px, 220px"
+        className="object-contain"
+      />
     </div>
   )
 
@@ -61,7 +71,13 @@ export function ProcessSection() {
         viewport={VP}
         transition={{ duration: 1.2, ease: 'easeOut' }}
       >
-        <img src={imgFlow} alt="" className="w-[50%] sm:w-[46%] h-auto object-contain opacity-30 lg:opacity-50" />
+        <Image
+          src={imgFlow}
+          alt=""
+          width={3447}
+          height={3741}
+          className="w-[50%] sm:w-[46%] h-auto object-contain opacity-30 lg:opacity-50"
+        />
       </m.div>
 
       <div className="max-w-360 mx-auto relative">

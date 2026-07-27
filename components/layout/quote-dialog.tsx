@@ -10,7 +10,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 
-export function QuoteDialog() {
+export function QuoteDialog({ trigger }: { trigger?: React.ReactElement }) {
   const fileRef = useRef<HTMLInputElement>(null)
   const [fileName, setFileName] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
@@ -55,13 +55,25 @@ export function QuoteDialog() {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger
-        className="cursor-pointer bg-transparent border-0 p-0 text-left font-bold text-lg sm:text-xl hover:opacity-80 transition-opacity"
-        style={{ fontFamily: 'var(--font-k2d)' }}
-      >
-        <span className="text-[#0A64BC]">Get Your </span>
-        <span className="text-white">Quote</span>
-      </DialogTrigger>
+      {trigger ? (
+        // Custom triggers here are styled wrapper components (motion span/div
+        // around a shadcn Button), not always a bare <button> at the root —
+        // nativeButton lets Base UI skip the "must be a real button" check
+        // and fall back to ARIA semantics instead.
+        <DialogTrigger render={trigger} nativeButton={false} />
+      ) : (
+        <DialogTrigger
+          className="cursor-pointer bg-transparent border-0 p-0 text-left font-bold text-lg sm:text-xl hover:opacity-80 transition-opacity"
+          style={{ fontFamily: 'var(--font-k2d)' }}
+        >
+          {/* #0A64BC on black is 3.56:1 — fails WCAG AA (4.5:1) at this
+              18px/bold size, just under the "large text" 3:1 threshold.
+              #4F9CE7 (already used elsewhere as the lighter end of the
+              brand gradient) passes at 7.24:1. */}
+          <span className="text-[#4F9CE7]">Get Your </span>
+          <span className="text-white">Quote</span>
+        </DialogTrigger>
+      )}
 
       <DialogContent
         className="bg-[#0d0d0d] border border-white/10 text-white sm:max-w-lg p-0 overflow-y-auto max-h-[90svh] rounded-[24px]"

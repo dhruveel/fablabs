@@ -1,0 +1,63 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGODB_DB:-fablabs}
+      MONGO_APP_USERNAME: ${MONGO_APP_USERNAME}
+      MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD}
+    volumes:
+      - mongo-data:/data/db
+      - ./docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - internal
+    # No ports published — only the app container can reach it, over the
+    # internal network. Never expose 27017 on the public interface.
+
+  app:
+    # CI builds and pushes this image (see .github/workflows/deploy.yml); the
+    # server only ever runs `docker compose pull`, never builds from source.
+    # `build:` is kept so local dev can still `docker compose up --build`.
+    image: ghcr.io/dhruveel/fablabs:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      # Overrides whatever MONGODB_URI is in .env — inside the compose
+      # network the app must talk to the "mongo" service by name, using the
+      # least-privilege app user mongo-init.js created, not the root user.
+      MONGODB_URI: mongodb://${MONGO_APP_USERNAME}:${MONGO_APP_PASSWORD}@mongo:27017/${MONGODB_DB:-fablabs}?authSource=${MONGODB_DB:-fablabs}
+      MONGODB_DB: ${MONGODB_DB:-fablabs}
+      QUOTE_UPLOADS_DIR: /app/uploads/quote-images
+    volumes:
+      - quote-uploads:/app/uploads
+    ports:
+      # Bound to localhost only — Nginx on the host reverse-proxies to this
+      # port and terminates TLS; the app is never reachable directly.
+      - "127.0.0.1:3000:3000"
+    networks:
+      - internal
+
+volumes:
+  mongo-data:
+  quote-uploads:
+
+networks:
+  internal:
+    driver: bridge

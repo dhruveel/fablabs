@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { m } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -8,19 +9,19 @@ import { cn } from "@/lib/utils";
 // ── Assets ────────────────────────────────────────────────────────────────────
 const A = {
   heroBg: "/assets/fab-hero-bg.jpg",
-  cotton: "/assets/abd20ae6-0a91-4bb1-b32e-e4a3c82003d7.png",
-  slub: "/assets/e9d2c02f-12af-418b-b925-83276a5378b5.png",
-  dryFit: "/assets/a54a3171-687d-40fe-aa32-6267ee7d7493.jpg",
-  pique: "/assets/608da7fc-c32a-4a96-aa27-e72aeec26fcb.jpg",
-  loopKnit: "/assets/da050ca5-adba-4ad7-8c1b-7a362b24c1d0.jpg",
-  derby: "/assets/682975cf-d505-46bc-a165-9b7c7bd3e4c7.png",
-  lycra: "/assets/0a54d5d6-4cc6-4ac4-9dd8-b7fae3002701.png",
-  melange: "/assets/d41fd111-382c-4322-a92b-c9cb52bca71f.png",
-  propsBg: "/assets/ea222154-5fd9-41ea-9a66-a9c1dcba2279.jpg",
-  iconDurabil: "/assets/fa14b391-9e95-4374-bd16-e3b4ddf3df5f.png",
-  iconSkin: "/assets/d6fdfa87-b36c-48a3-93c4-ad16e19e74ac.png",
-  iconCustom: "/assets/2cdb31a3-96c4-4782-a420-5236799a7180.png",
-  iconSustain: "/assets/fa14b391-9e95-4374-bd16-e3b4ddf3df5f.png",
+  cotton: "/assets/fab-fabric-cotton.png",
+  slub: "/assets/fab-fabric-slub-cotton.png",
+  dryFit: "/assets/fab-fabric-dry-fit.jpg",
+  pique: "/assets/fab-fabric-pique.jpg",
+  loopKnit: "/assets/fab-fabric-loop-knit.jpg",
+  derby: "/assets/fab-fabric-derby.png",
+  lycra: "/assets/fab-fabric-lycra.png",
+  melange: "/assets/fab-fabric-color-melange.png",
+  propsBg: "/assets/fab-properties-bg.jpg",
+  iconDurabil: "/assets/fab-icon-durability.png",
+  iconSkin: "/assets/fab-icon-skin-friendly.png",
+  iconCustom: "/assets/fab-icon-customization.png",
+  iconSustain: "/assets/fab-icon-sustainable.png",
 };
 
 // ── Data ─────────────────────────────────────────────────────────────────────
@@ -142,7 +143,15 @@ function HeroSection() {
   return (
     <section className="relative w-full bg-black overflow-hidden min-h-75 sm:min-h-100 lg:min-h-142.25 flex items-center justify-center">
       <div className="absolute inset-0 pointer-events-none select-none">
-        <img src={A.heroBg} alt="" className="w-full h-full object-cover" />
+        <Image
+          src={A.heroBg}
+          alt=""
+          fill
+          className="object-cover"
+          sizes="100vw"
+          preload
+          fetchPriority="high"
+        />
       </div>
 
       <div className="relative z-10 flex flex-col items-center text-center px-6 py-16">
@@ -189,10 +198,14 @@ function FabricCard({ label, img, href, description }: { label: string; img: str
       onMouseLeave={() => setHovered(false)}
       transition={{ type: 'spring' as const, stiffness: 300, damping: 22 }}
     >
-      <img src={img} alt={label} className="absolute inset-0 w-full h-full object-cover" />
-      {/* Base overlay */}
-      <div className="absolute inset-0 bg-white/20" />
-      {/* Dark overlay fades in on hover for readability */}
+      <Image
+        src={img}
+        alt={label}
+        fill
+        className="object-cover"
+        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 300px"
+      />
+      {/* Dark overlay fades in on hover for description readability */}
       <m.div
         className="absolute inset-0 bg-black/60"
         animate={{ opacity: hovered ? 1 : 0 }}
@@ -200,7 +213,7 @@ function FabricCard({ label, img, href, description }: { label: string; img: str
       />
       {/* Label — fades out on hover */}
       <m.p
-        className="absolute z-10 font-black text-black text-center leading-tight px-3"
+        className="absolute z-10 font-extrabold text-black text-center leading-tight px-3"
         style={{ fontFamily: 'var(--font-k2d)', fontSize: 'clamp(18px, 3.5vw, 52px)' }}
         animate={{ opacity: hovered ? 0 : 1, y: hovered ? -10 : 0 }}
         transition={{ duration: 0.2 }}
@@ -209,8 +222,8 @@ function FabricCard({ label, img, href, description }: { label: string; img: str
       </m.p>
       {/* Description — fades in on hover */}
       <m.p
-        className="absolute z-10 text-white font-extrabold text-center max-w-[80%]"
-        style={{ fontFamily: 'var(--font-k2d)', fontSize: '16px', fontStyle: 'normal', lineHeight: '100%' }}
+        className="absolute z-10 text-white font-bold text-center max-w-[80%] px-3"
+        style={{ fontFamily: 'var(--font-k2d)', fontSize: '16px', lineHeight: 'normal' }}
         animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : 10 }}
         transition={{ duration: 0.2 }}
       >
@@ -226,37 +239,39 @@ function FabricCard({ label, img, href, description }: { label: string; img: str
 function FabricsSection() {
   return (
     <section className="w-full bg-black py-16 sm:py-20 px-4 sm:px-8 lg:px-12">
-      <m.div
-        className="w-full max-w-300 mx-auto rounded-[25px] px-8 sm:px-14 py-10 sm:py-14 mb-12 sm:mb-16"
-        style={{
-          background: "linear-gradient(180deg, #517388 0%, #1f0e6d 100%)",
-        }}
+      <m.p
+        className="text-white text-center text-sm sm:text-base lg:text-[16px] leading-relaxed max-w-264 mx-auto mb-12 sm:mb-16"
+        style={{ fontFamily: "var(--font-k2d)", fontWeight: 500 }}
         {...fadeUp()}
       >
-        <p
-          className="text-white text-center text-sm sm:text-base lg:text-[16px] leading-relaxed"
-          style={{ fontFamily: "var(--font-k2d)", fontWeight: 500 }}
-        >
-          Every Great Design Starts with the Right Fabric. At Fablabs, we know
-          that the foundation of exceptional apparel lies in the fabric. Whether
-          you&apos;re creating vibrant t-shirts, cozy sweatshirts, or
-          professional polos, we provide the perfect canvas to bring your ideas
-          to life. Explore our diverse range of fabrics, each selected for its
-          quality, durability, and ability to showcase your designs flawlessly.
-        </p>
-      </m.div>
+        Every Great Design Starts with the Right Fabric. At Fablabs, we know
+        that the foundation of exceptional apparel lies in the fabric. Whether
+        you&apos;re creating vibrant t-shirts, cozy sweatshirts, or
+        professional polos, we provide the perfect canvas to bring your ideas
+        to life. Explore our diverse range of fabrics, each selected for its
+        quality, durability, and ability to showcase your designs flawlessly.
+      </m.p>
 
-      <m.div
-        className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 max-w-300 mx-auto"
-        variants={staggerGrid}
-        initial="hidden"
-        whileInView="show"
-        viewport={VP}
-      >
-        {FABRICS.map((f) => (
-          <FabricCard key={f.label} {...f} />
-        ))}
-      </m.div>
+      <div className="relative max-w-300 mx-auto">
+        {/* Gradient panel behind the card grid */}
+        <div
+          className="absolute inset-x-[4%] top-[12%] bottom-[12%] rounded-[25px] pointer-events-none"
+          style={{
+            background: "linear-gradient(180deg, #517388 0%, #1f0e6d 100%)",
+          }}
+        />
+        <m.div
+          className="relative grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5"
+          variants={staggerGrid}
+          initial="hidden"
+          whileInView="show"
+          viewport={VP}
+        >
+          {FABRICS.map((f) => (
+            <FabricCard key={f.label} {...f} />
+          ))}
+        </m.div>
+      </div>
     </section>
   );
 }
@@ -266,10 +281,12 @@ function PropertiesSection() {
   return (
     <section className="relative w-full bg-black overflow-hidden py-16 sm:py-20 px-4 sm:px-8 lg:px-12">
       <div className="absolute inset-0 pointer-events-none select-none">
-        <img
+        <Image
           src={A.propsBg}
           alt=""
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
+          sizes="100vw"
           style={{ opacity: 0.27 }}
         />
       </div>
@@ -299,9 +316,11 @@ function PropertiesSection() {
               <Card className="bg-[#222] rounded-[19px] border-0 ring-0 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] overflow-visible">
                 <CardContent className="p-0 flex flex-col">
                   <div className="bg-[#444] rounded-[19px] m-3.5 mb-0 overflow-hidden flex items-center justify-center p-4">
-                    <img
+                    <Image
                       src={p.icon}
                       alt=""
+                      width={512}
+                      height={512}
                       className="size-full max-h-38.5 object-contain"
                     />
                   </div>

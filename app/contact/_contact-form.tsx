@@ -1,7 +1,7 @@
 'use client'
 
 import Script from 'next/script'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -11,9 +11,10 @@ const SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? ''
 
 declare global {
   interface Window {
-    grecaptcha?: { getResponse: () => string; reset: () => void }
-    onRecaptchaVerified?: () => void
-    onRecaptchaExpired?: () => void
+    grecaptcha?: {
+      ready: (callback: () => void) => void
+      execute: (siteKey: string, options: { action: string }) => Promise<string>
+    }
   }
 }
 
@@ -49,33 +50,23 @@ function BlueOutlineBtn({
 
 export function ContactForm() {
   const formRef = useRef<HTMLFormElement>(null)
-  const [verified, setVerified] = useState(false)
+  const [recaptchaReady, setRecaptchaReady] = useState(false)
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  // Expose reCAPTCHA callbacks to the global scope so the widget can call them
-  useEffect(() => {
-    window.onRecaptchaVerified = () => setVerified(true)
-    window.onRecaptchaExpired  = () => setVerified(false)
-    return () => {
-      delete window.onRecaptchaVerified
-      delete window.onRecaptchaExpired
-    }
-  }, [])
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const token = window.grecaptcha?.getResponse()
-    if (!token) return
 
     const form = formRef.current
-    if (!form) return
+    if (!form || !window.grecaptcha) return
 
-    const formData = new FormData(form)
     setStatus('submitting')
     setErrorMessage(null)
 
     try {
+      const token = await window.grecaptcha.execute(SITE_KEY, { action: 'contact' })
+      const formData = new FormData(form)
+
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -93,14 +84,10 @@ export function ContactForm() {
         const data = await res.json().catch(() => null)
         setErrorMessage(data?.error ?? 'Something went wrong. Please try again.')
         setStatus('error')
-        window.grecaptcha?.reset()
-        setVerified(false)
         return
       }
 
       form.reset()
-      window.grecaptcha?.reset()
-      setVerified(false)
       setStatus('success')
     } catch {
       setErrorMessage('Something went wrong. Please try again.')
@@ -110,8 +97,12 @@ export function ContactForm() {
 
   return (
     <>
-      {/* reCAPTCHA v2 API script — no npm package required */}
-      <Script src="https://www.google.com/recaptcha/api.js" strategy="lazyOnload" />
+      {/* reCAPTCHA v3 API script — invisible, no npm package required */}
+      <Script
+        src={`https://www.google.com/recaptcha/api.js?render=${SITE_KEY}`}
+        strategy="lazyOnload"
+        onLoad={() => window.grecaptcha?.ready(() => setRecaptchaReady(true))}
+      />
 
       <form ref={formRef} className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <Input
@@ -155,17 +146,6 @@ export function ContactForm() {
           style={{ fontFamily: 'var(--font-k2d)' }}
         />
 
-        {/* reCAPTCHA v2 "I'm not a robot" checkbox */}
-        <div className="pt-1">
-          <div
-            className="g-recaptcha"
-            data-sitekey={SITE_KEY}
-            data-theme="dark"
-            data-callback="onRecaptchaVerified"
-            data-expired-callback="onRecaptchaExpired"
-          />
-        </div>
-
         {status === 'success' && (
           <p className="text-sm text-green-400">
             Thanks! Your message has been sent — we&apos;ll get back to you soon.
@@ -176,7 +156,7 @@ export function ContactForm() {
         )}
 
         <div className="pt-2">
-          <BlueOutlineBtn type="submit" disabled={!verified || status === 'submitting'}>
+          <BlueOutlineBtn type="submit" disabled={!recaptchaReady || status === 'submitting'}>
             {status === 'submitting' ? 'Sending…' : "Let's Talk"}
           </BlueOutlineBtn>
         </div>
