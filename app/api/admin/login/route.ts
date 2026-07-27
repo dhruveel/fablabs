@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { AdminLoginSchema } from '@/lib/validations/admin'
 import { verifyAdminCredentials } from '@/lib/auth/admin'
 import { createAdminSession } from '@/lib/auth/session'
-import { rateLimitOrNull } from '@/lib/rate-limit'
+import { rateLimitByKeyOrNull, rateLimitOrNull } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
   const rateLimited = await rateLimitOrNull(request, 'admin-login', {
@@ -24,6 +24,16 @@ export async function POST(request: NextRequest) {
   }
 
   const { email, password } = parsed.data
+
+  // IP-independent limiter keyed on the account being targeted, since the
+  // per-IP check above only holds if X-Forwarded-For can be trusted.
+  const accountLimited = await rateLimitByKeyOrNull(
+    'admin-login-account',
+    email.trim().toLowerCase(),
+    { max: 10, windowMs: 15 * 60 * 1000 },
+  )
+  if (accountLimited) return accountLimited
+
   const isValid = await verifyAdminCredentials(email, password)
 
   if (!isValid) {

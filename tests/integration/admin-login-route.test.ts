@@ -2,10 +2,11 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 
 const rateLimitOrNull = vi.fn().mockResolvedValue(null);
+const rateLimitByKeyOrNull = vi.fn().mockResolvedValue(null);
 const verifyAdminCredentials = vi.fn().mockResolvedValue(true);
 const createAdminSession = vi.fn().mockResolvedValue(undefined);
 
-vi.mock("@/lib/rate-limit", () => ({ rateLimitOrNull }));
+vi.mock("@/lib/rate-limit", () => ({ rateLimitOrNull, rateLimitByKeyOrNull }));
 vi.mock("@/lib/auth/admin", () => ({ verifyAdminCredentials }));
 vi.mock("@/lib/auth/session", () => ({ createAdminSession }));
 
@@ -22,13 +23,24 @@ function makeRequest(body: unknown) {
 describe("POST /api/admin/login", () => {
   beforeEach(() => {
     rateLimitOrNull.mockReset().mockResolvedValue(null);
+    rateLimitByKeyOrNull.mockReset().mockResolvedValue(null);
     verifyAdminCredentials.mockReset().mockResolvedValue(true);
     createAdminSession.mockReset().mockResolvedValue(undefined);
   });
 
-  it("returns the rate limiter's response untouched when rate-limited", async () => {
+  it("returns the rate limiter's response untouched when rate-limited by IP", async () => {
     const limited = new Response(null, { status: 429 });
     rateLimitOrNull.mockResolvedValue(limited);
+
+    const res = await POST(makeRequest({ email: "admin@fablabs.in", password: "x" }));
+
+    expect(res).toBe(limited);
+    expect(verifyAdminCredentials).not.toHaveBeenCalled();
+  });
+
+  it("returns the rate limiter's response untouched when rate-limited by account", async () => {
+    const limited = new Response(null, { status: 429 });
+    rateLimitByKeyOrNull.mockResolvedValue(limited);
 
     const res = await POST(makeRequest({ email: "admin@fablabs.in", password: "x" }));
 
