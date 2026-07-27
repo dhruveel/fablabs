@@ -44,6 +44,13 @@ export async function checkRateLimit(
   return { allowed: count <= max, retryAfterSeconds }
 }
 
+function tooManyRequestsResponse(retryAfterSeconds: number): NextResponse {
+  return NextResponse.json(
+    { error: 'Too many requests. Please try again later.' },
+    { status: 429, headers: { 'Retry-After': String(retryAfterSeconds) } },
+  )
+}
+
 /**
  * Convenience wrapper for route handlers: returns a 429 response when the
  * caller has exceeded `max` requests per `windowMs`, or `null` to continue.
@@ -60,9 +67,23 @@ export async function rateLimitOrNull(
   )
 
   if (allowed) return null
+  return tooManyRequestsResponse(retryAfterSeconds)
+}
 
-  return NextResponse.json(
-    { error: 'Too many requests. Please try again later.' },
-    { status: 429, headers: { 'Retry-After': String(retryAfterSeconds) } },
-  )
+/**
+ * Same as rateLimitOrNull, but keyed on a caller-supplied identifier instead
+ * of the client IP. `X-Forwarded-For` is attacker-controlled unless a
+ * trusted proxy in front of this app overwrites it, so IP-only limiting can
+ * be defeated by sending a different value on every request. Use this to key
+ * on something the attacker can't rotate — e.g. the account being targeted.
+ */
+export async function rateLimitByKeyOrNull(
+  scope: string,
+  key: string,
+  limits: { max: number; windowMs: number },
+): Promise<NextResponse | null> {
+  const { allowed, retryAfterSeconds } = await checkRateLimit(scope, key, limits)
+
+  if (allowed) return null
+  return tooManyRequestsResponse(retryAfterSeconds)
 }
