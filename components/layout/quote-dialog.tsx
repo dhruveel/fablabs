@@ -2,7 +2,7 @@
 
 import Script from 'next/script'
 import { useRef, useState } from 'react'
-import { UploadCloudIcon, CheckCircleIcon } from 'lucide-react'
+import { UploadCloudIcon, CheckCircleIcon, Loader2Icon } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -282,12 +282,13 @@ function QuoteForm({
         <button
           type="submit"
           disabled={pending || submitDisabled}
-          className="mt-1 h-12 rounded-full font-bold text-white text-sm transition-opacity hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
+          className="mt-1 h-12 rounded-full font-bold text-white text-sm transition-opacity hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2"
           style={{
             fontFamily: 'var(--font-k2d)',
             background: 'linear-gradient(100deg, #0a64bc 5.67%, #4f9ce7 99.53%)',
           }}
         >
+          {pending && <Loader2Icon className="size-4 animate-spin" />}
           {pending ? 'Sending…' : 'Send Quote Request'}
         </button>
       </form>
