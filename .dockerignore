@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+.env*
+!.env.example
+uploads
+coverage
+*.tsbuildinfo
+next-env.d.ts
+Dockerfile
+.dockerignore
+README.md
+tests

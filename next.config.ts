@@ -42,6 +42,10 @@ const nextConfig: NextConfig = {
     root: __dirname,
   },
 
+  // Emits a pruned .next/standalone server (only the deps actually reached
+  // at runtime) so the Docker production image doesn't need node_modules.
+  output: "standalone",
+
   compress: true,
   poweredByHeader: false,
 
