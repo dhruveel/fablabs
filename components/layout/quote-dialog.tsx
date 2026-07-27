@@ -33,6 +33,11 @@ export function QuoteDialog({ trigger }: { trigger?: React.ReactElement }) {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    // Captured synchronously, before the first `await` below — a DOM event's
+    // currentTarget is nulled out once dispatch finishes, which happens well
+    // before grecaptcha.execute() resolves, so reading e.currentTarget after
+    // that point throws "Failed to construct 'FormData'" on a null target.
+    const form = e.currentTarget
     if (!window.grecaptcha) {
       console.error('[quote-dialog] grecaptcha not loaded at submit time')
       setError('Something went wrong. Please try again.')
@@ -43,7 +48,7 @@ export function QuoteDialog({ trigger }: { trigger?: React.ReactElement }) {
 
     try {
       const token = await window.grecaptcha.execute(SITE_KEY, { action: 'quote' })
-      const formData = new FormData(e.currentTarget)
+      const formData = new FormData(form)
       formData.set('recaptchaToken', token)
 
       const res = await fetch('/api/quote', { method: 'POST', body: formData })
