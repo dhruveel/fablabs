@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Geist, Geist_Mono, Inter, K2D, Jersey_10, Permanent_Marker, Rock_Salt } from 'next/font/google'
+import { Inter, K2D, Jersey_10, Permanent_Marker, Rock_Salt } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/lib/utils'
 import { SiteChrome } from '@/components/layout/site-chrome'
@@ -7,9 +7,7 @@ import { ScrollToTop } from '@/components/layout/scroll-to-top'
 import { Providers } from '@/components/providers'
 import { siteConfig } from '@/config'
 
-const inter     = Inter({ subsets: ['latin'], variable: '--font-sans' })
-const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
-const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 const k2d = K2D({
   subsets:  ['latin'],
   weight:   ['400', '500', '700'],
@@ -84,8 +82,6 @@ export default function RootLayout({
       lang="en"
       className={cn(
         'h-full antialiased',
-        geistSans.variable,
-        geistMono.variable,
         inter.variable,
         k2d.variable,
         jersey10.variable,

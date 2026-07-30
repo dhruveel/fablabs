@@ -4,8 +4,7 @@ import { m, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { QuoteDialog } from "@/components/layout/quote-dialog";
-import { A, BlueOutlineBtn } from "./_home-shared";
+import { A } from "./_home-shared";
 
 // Everything below the Hero lives in its own module and is code-split here —
 // still server-rendered (dynamic() defaults to ssr: true, so content/SEO are
@@ -110,44 +109,6 @@ function HeroSection() {
             />
           </m.div>
         </div>
-
-        {/* CTA */}
-        <m.div
-          className="flex flex-col items-center gap-4 mt-6"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.7, ease: "easeOut" }}
-        >
-          <QuoteDialog trigger={<BlueOutlineBtn>Get My Quote</BlueOutlineBtn>} />
-          <div className="flex gap-3">
-            <button
-              aria-label="Previous"
-              className="cursor-pointer opacity-80 hover:opacity-100 transition-opacity"
-            >
-              <Image
-                src={A.arrowUp}
-                alt=""
-                width={95}
-                height={55}
-                className="h-12 w-auto"
-                style={{ width: "auto" }}
-              />
-            </button>
-            <button
-              aria-label="Next"
-              className="cursor-pointer opacity-80 hover:opacity-100 transition-opacity"
-            >
-              <Image
-                src={A.arrowDn}
-                alt=""
-                width={95}
-                height={55}
-                className="h-12 w-auto -scale-y-100"
-                style={{ width: "auto" }}
-              />
-            </button>
-          </div>
-        </m.div>
       </div>
     </section>
   );

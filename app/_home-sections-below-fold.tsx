@@ -892,7 +892,7 @@ function QuotesSection() {
             Get a custom quote today and let&apos;s start building something
             extraordinary — made just for you, by us.
           </p>
-          <BlueOutlineBtn>Get My Quote</BlueOutlineBtn>
+          <QuoteDialog trigger={<BlueOutlineBtn>Get My Quote</BlueOutlineBtn>} />
         </m.div>
         {/* Decorative imagery: mobile/tablet, inline below the text */}
         <m.div

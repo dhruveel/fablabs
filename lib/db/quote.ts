@@ -48,7 +48,7 @@ export async function listQuoteRequests(
 
   const [docs, total] = await Promise.all([
     collection.find().sort({ createdAt: -1 }).skip(skip).limit(pageSize).toArray(),
-    collection.countDocuments(),
+    collection.estimatedDocumentCount(),
   ])
 
   return {
