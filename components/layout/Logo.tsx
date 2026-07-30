@@ -8,8 +8,8 @@ export function Logo() {
       className="flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0A64BC]/50 rounded-sm"
     >
       <svg
-        width="52.8"
-        height="52.8"
+        width="64"
+        height="64"
         viewBox="0 0 44 44"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -21,7 +21,7 @@ export function Logo() {
           fill="white"
         />
       </svg>
-      <span className="text-2xl font-bold tracking-tight text-[#0A64BC]">
+      <span className="text-3xl font-bold tracking-tight text-[#0A64BC]">
         FabLabs
       </span>
     </Link>
