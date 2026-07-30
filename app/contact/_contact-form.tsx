@@ -2,6 +2,7 @@
 
 import Script from 'next/script'
 import { useRef, useState } from 'react'
+import { Loader2Icon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -162,6 +163,7 @@ export function ContactForm() {
 
         <div className="pt-2">
           <BlueOutlineBtn type="submit" disabled={!recaptchaReady || status === 'submitting'}>
+            {status === 'submitting' && <Loader2Icon className="size-4 animate-spin" />}
             {status === 'submitting' ? 'Sending…' : "Let's Talk"}
           </BlueOutlineBtn>
         </div>

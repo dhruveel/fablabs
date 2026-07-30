@@ -23,7 +23,7 @@ export function Navigation() {
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "relative text-sm font-medium text-[#0A64BC] transition-opacity duration-150",
+                  "relative text-[16.8px] font-medium text-[#0A64BC] transition-opacity duration-150",
                   "after:absolute after:bottom-[-3px] after:left-0 after:h-[2px] after:w-full after:rounded-full after:bg-[#0A64BC] after:transition-opacity after:duration-150",
                   isActive
                     ? "opacity-100 after:opacity-100"
