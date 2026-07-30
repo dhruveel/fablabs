@@ -25,7 +25,7 @@ const LOGO = "/assets/logo.png";
 export function DarkNav() {
   return (
     <header className="sticky top-0 z-50 w-full bg-black/95 backdrop-blur-sm border-b border-white/10">
-      <div className="mx-auto flex h-16 max-w-360 items-center gap-4 px-4 sm:px-8 lg:px-10">
+      <div className="mx-auto flex h-20 max-w-360 items-center gap-4 px-4 sm:px-8 lg:px-10">
         {/* Logo */}
         <Link href="/" className="shrink-0">
           <Image
@@ -34,7 +34,6 @@ export function DarkNav() {
             width={200}
             height={48}
             className="h-12 w-auto object-contain"
-            style={{ width: "auto", height: "auto" }}
             priority
           />
         </Link>
@@ -47,7 +46,7 @@ export function DarkNav() {
                 <NavigationMenuItem key={item.href}>
                   <NavigationMenuLink
                     href={item.href}
-                    className="text-[#0A64BC]/70 hover:text-[#0A64BC] hover:bg-[#0A64BC]/10 text-sm font-bold px-4 py-2 rounded-full"
+                    className="text-[#0A64BC]/70 hover:text-[#0A64BC] hover:bg-[#0A64BC]/10 text-lg font-bold px-4 py-2 rounded-full"
                   >
                     {item.label}
                   </NavigationMenuLink>
@@ -102,7 +101,7 @@ export function DarkNav() {
                           render={
                             <Link
                               href={item.href}
-                              className="flex w-full items-center rounded-lg px-3 py-2.5 text-sm font-bold text-[#0A64BC]/70 hover:bg-[#0A64BC]/10 hover:text-[#0A64BC] transition-colors"
+                              className="flex w-full items-center rounded-lg px-3 py-2.5 text-lg font-bold text-[#0A64BC]/70 hover:bg-[#0A64BC]/10 hover:text-[#0A64BC] transition-colors"
                             />
                           }
                         >
