@@ -25,10 +25,9 @@ export function DarkFooter() {
             <Image
               src={A.logo}
               alt="FabLabs"
-              width={200}
-              height={96}
+              width={400}
+              height={134}
               className="h-24 w-auto object-contain"
-              style={{ width: "auto", height: "auto" }}
             />
             <p
               className="text-white font-bold text-sm leading-relaxed"
