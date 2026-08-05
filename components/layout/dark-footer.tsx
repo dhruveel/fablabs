@@ -1,19 +1,23 @@
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { QuoteDialog } from "./quote-dialog";
+import { siteConfig } from "@/config";
 
 const A = {
   logo: "/assets/logo.png",
   socFb: "/assets/footer-social-facebook.png",
   socIg: "/assets/footer-social-instagram.png",
-  socTw: "/assets/footer-social-twitter.png",
-  socYt: "/assets/footer-social-youtube.png",
+  socLi: "/assets/footer-social-linkedin.png",
   icoPhone: "/assets/footer-icon-phone.png",
   icoEmail: "/assets/footer-icon-email.png",
   icoAddr: "/assets/footer-icon-address.png",
 };
 
-const SOCIAL_LABELS = ["Facebook", "Instagram", "Twitter / X", "YouTube"];
+const SOCIAL_LINKS = [
+  { label: "Facebook", icon: A.socFb, href: siteConfig.links.facebook },
+  { label: "Instagram", icon: A.socIg, href: siteConfig.links.instagram },
+  { label: "LinkedIn", icon: A.socLi, href: siteConfig.links.linkedin },
+];
 
 export function DarkFooter() {
   return (
@@ -36,15 +40,22 @@ export function DarkFooter() {
               Custom merch. Real stories. FabLabs always on.
             </p>
             <div className="flex gap-4">
-              {([A.socFb, A.socIg, A.socTw, A.socYt] as const).map((src, i) => (
-                <Image
-                  key={i}
-                  src={src}
-                  alt={SOCIAL_LABELS[i]}
-                  width={32}
-                  height={32}
-                  className="size-8 object-cover rounded"
-                />
+              {SOCIAL_LINKS.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                >
+                  <Image
+                    src={social.icon}
+                    alt={social.label}
+                    width={32}
+                    height={32}
+                    className="size-8 object-cover rounded"
+                  />
+                </a>
               ))}
             </div>
           </div>
