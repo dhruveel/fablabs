@@ -32,7 +32,7 @@ export function DarkNav() {
             src={LOGO}
             alt="FabLabs"
             width={200}
-            height={48}
+            height={67}
             className="h-12 w-auto object-contain"
             priority
           />

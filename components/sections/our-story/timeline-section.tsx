@@ -95,8 +95,8 @@ function LogoBadge({ className }: { className?: string }) {
           src={imgs.logo}
           alt=""
           aria-hidden
-          width={175}
-          height={57}
+          width={200}
+          height={67}
           className="w-full h-auto object-contain"
         />
       </div>

@@ -52,7 +52,7 @@ function HeroSection() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-between px-4 sm:px-8 py-10 min-h-[inherit]">
+      <div className="relative z-10 flex flex-col items-center justify-between px-4 sm:px-8 min-h-[inherit]">
         {/* Models */}
         <div className="flex flex-1 items-end justify-center gap-1 sm:gap-3 w-full max-w-225">
           <m.div
